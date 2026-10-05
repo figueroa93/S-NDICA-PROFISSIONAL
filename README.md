@@ -31,7 +31,7 @@ const SITE = {
 Todos os botões de WhatsApp (topo, hero, CTA, rodapé e botão flutuante), o botão "Entrar em contato" e os dados do rodapé são atualizados automaticamente.
 
 ### 2. Domínio
-Substitua `https://www.nataliafigueroa.com.br/` pelo domínio definitivo em `index.html` (canonical, Open Graph, JSON-LD), `robots.txt` e `sitemap.xml`.
+O domínio oficial é `https://gestaofacilfigueroa.com.br/`. Se mudar, atualize em `index.html` (canonical, Open Graph, JSON-LD), `robots.txt` e `sitemap.xml`.
 
 ### 3. Fotografias
 As imagens atuais são ilustrações provisórias. Substitua por fotografias reais, de preferência em **WebP**:
