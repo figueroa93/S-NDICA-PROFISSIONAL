@@ -11,7 +11,7 @@
  */
 const SITE = {
   whatsapp: '5521981360537',
-  email: '',
+  email: 'natalia.gestao.condominial@gmail.com',
   instagram: '',
   mensagemWhatsapp: 'Olá, Natália! Conheci seu trabalho pelo site e gostaria de conversar sobre a gestão do meu condomínio.',
 };
