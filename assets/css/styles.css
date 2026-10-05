@@ -493,6 +493,7 @@ body.nav-open { overflow: hidden; }
 .footer__tagline { margin-top: 24px; font-family: var(--font-title); color: var(--text-on-dark); font-weight: 500; }
 .footer__title { font-size: .75rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: var(--white); margin-bottom: 20px; }
 .footer__contact li { display: flex; align-items: center; gap: 12px; padding: 6px 0; }
+.footer__contact a { overflow-wrap: anywhere; }
 .footer__contact .icon { width: 18px; height: 18px; color: var(--blue); }
 .footer a { transition: color .3s var(--ease); }
 .footer a:hover { color: var(--white); }
