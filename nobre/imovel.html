@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Detalhes do imóvel | Nobre Gestão de Condomínios</title>
+  <meta name="description" content="Detalhes, fotos e valores do imóvel.">
+  <meta name="theme-color" content="#0f2341">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <!-- Se uma foto não carregar, mostra o fundo azul no lugar do ícone de imagem quebrada -->
+  <script>document.addEventListener('error',function(e){if(e.target.tagName==='IMG')e.target.style.opacity=0},true)</script>
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container header__inner">
+      <a class="brand" href="index.html" aria-label="Nobre Gestão de Condomínios — página inicial">
+        <span class="brand__seal"><svg aria-hidden="true"><use href="assets/img/icons.svg#i-logo"></use></svg></span>
+        <span class="brand__text"><span class="brand__name">NOBRE</span><span class="brand__tag">Gestão de condomínios</span></span>
+      </a>
+
+      <nav class="nav" id="nav" aria-label="Menu principal">
+        <div class="nav__item">
+          <button class="nav__link" type="button" aria-expanded="false">Condomínios <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-chevron"></use></svg></button>
+          <div class="nav__menu">
+            <a href="index.html#servicos">Administração de condomínios</a>
+            <a href="index.html#area-condomino">Área do condômino</a>
+            <a href="index.html?assunto=administracao#contato">Solicitar proposta</a>
+          </div>
+        </div>
+        <div class="nav__item">
+          <button class="nav__link" type="button" aria-expanded="false">Síndico Profissional <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-chevron"></use></svg></button>
+          <div class="nav__menu">
+            <a href="index.html#sindico">Como funciona</a>
+            <a href="index.html#conteudos">Dúvidas frequentes</a>
+            <a href="index.html?assunto=sindico#contato">Solicitar proposta</a>
+          </div>
+        </div>
+        <div class="nav__item">
+          <button class="nav__link" type="button" aria-expanded="false">Imóveis <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-chevron"></use></svg></button>
+          <div class="nav__menu">
+            <a href="imoveis.html?finalidade=venda">Comprar</a>
+            <a href="imoveis.html?finalidade=aluguel">Alugar</a>
+            <a href="imoveis.html">Todos os imóveis</a>
+            <a href="index.html?assunto=anunciar#contato">Anunciar meu imóvel</a>
+          </div>
+        </div>
+        <div class="nav__item"><a class="nav__link" href="index.html#sobre">Sobre a Nobre</a></div>
+        <div class="nav__item"><a class="nav__link" href="index.html#conteudos">Conteúdos</a></div>
+        <div class="nav__cta">
+          <a class="btn btn--gold" href="index.html#contato">Fale conosco</a>
+        </div>
+      </nav>
+
+      <div class="header__actions">
+        <a class="btn-condomino" data-link="condomino" href="#" title="Boletos, balancetes, documentos e reservas">
+          <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-lock"></use></svg><span>Área do condômino</span>
+        </a>
+        <a class="btn btn--gold" href="index.html#contato">Fale conosco <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-arrow"></use></svg></a>
+        <button class="menu-toggle" type="button" aria-controls="nav" aria-expanded="false" aria-label="Abrir menu"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-menu"></use></svg></button>
+      </div>
+    </div>
+  </header>
+  <!-- /HEADER -->
+
+  <main id="conteudo">
+    <section class="page-hero">
+      <div class="container">
+        <p class="breadcrumb"><a href="index.html">Início</a> / <a href="imoveis.html">Imóveis</a> / Detalhes</p>
+        <h1 data-detail-title>Detalhes do imóvel</h1>
+        <p data-detail-loc></p>
+      </div>
+    </section>
+    <section class="section section--tight" style="padding-top:40px">
+      <div class="container detail" data-detail></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer__top">
+      <div>
+        <a class="footer__logo" href="index.html" aria-label="Nobre Gestão de Condomínios">
+          <svg aria-hidden="true"><use href="assets/img/icons.svg#i-logo"></use></svg>
+          <strong>NOBRE</strong><span>GESTÃO DE CONDOMÍNIOS</span>
+        </a>
+      </div>
+      <div>
+        <h3>Navegue</h3>
+        <nav class="footer__nav" aria-label="Rodapé">
+          <a href="index.html#servicos">Condomínios</a>
+          <a href="index.html#sindico">Síndico Profissional</a>
+          <a href="imoveis.html">Imóveis</a>
+          <a href="index.html#sobre">Sobre a Nobre</a>
+          <a href="index.html#conteudos">Conteúdos</a>
+          <a data-link="condomino" href="#">Área do condômino</a>
+        </nav>
+      </div>
+      <div>
+        <h3>Fale conosco</h3>
+        <ul class="footer__contact">
+          <li><a data-link="whatsapp" href="#"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-phone"></use></svg><span data-site="telefone">(21) 00000-0000</span></a></li>
+          <li><a data-link="email" href="#"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-mail"></use></svg><span data-site="email">contato@nobregestaodecondominios.com.br</span></a></li>
+          <li><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-pin"></use></svg><span data-site="cidade">Rio de Janeiro - RJ</span></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer__motto">Seu patrimônio<br>em boas mãos.</p>
+        <a class="btn btn--outline btn--sm footer__condo" data-link="condomino" href="#"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-lock"></use></svg> Área do condômino</a>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <p>NOBRE Gestão de Condomínios © <span data-year>2026</span>. Todos os direitos reservados.</p>
+      <p class="footer__legal"><a href="privacidade.html">Política de Privacidade</a><span>|</span><a href="privacidade.html#termos">Termos de Uso</a><span>|</span><a href="privacidade.html#lgpd">LGPD</a></p>
+    </div>
+  </footer>
+  <a class="wa-float" data-link="whatsapp" href="#" aria-label="Falar no WhatsApp"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-whatsapp"></use></svg></a>
+  <!-- /FOOTER -->
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
