@@ -11,6 +11,7 @@ index.html                 página completa (todas as seções)
 assets/css/styles.css      estilos (mobile first)
 assets/js/main.js          contatos, menu, animações, contadores e carrossel
 assets/img/                imagens, favicon e imagem de compartilhamento
+obrigado.html             página exibida após o envio do formulário
 robots.txt, sitemap.xml, site.webmanifest
 ```
 
@@ -49,10 +50,17 @@ Ao trocar a foto da Natália, atualize também o `src` e mantenha o texto `alt`.
 Na seção `#experiencia`, altere o atributo `data-count` (e o número dentro do `<span>`). Use apenas dados verdadeiros e comprováveis.
 
 ### 5. Casos reais (Experiência na prática)
-Na seção `#na-pratica`, cada caso é um `<article class="case">`. Duplique para adicionar novos e troque os espaços de foto por `<img>` (instruções no comentário do HTML). Insira somente resultados reais.
+A seção `#na-pratica` está **oculta** (atributo `hidden`) até haver casos reais. Para exibir, remova `hidden` da tag `<section>`. Na seção, cada caso é um `<article class="case">`. Duplique para adicionar novos e troque os espaços de foto por `<img>` (instruções no comentário do HTML). Insira somente resultados reais.
 
 ### 6. Depoimentos
-Na seção `#depoimentos`, substitua os textos entre colchetes por depoimentos reais (com autorização) e remova a classe `placeholder`. Para adicionar mais, duplique um `<li class="slide">` e ajuste o `aria-label` ("1 de 3" etc.).
+A seção `#depoimentos` está **oculta** (atributo `hidden`) até haver depoimentos reais. Para exibir, remova `hidden` da tag `<section>` e troque o link "Dúvidas" por "Depoimentos" no menu e no rodapé, se desejar. Na seção, substitua os textos entre colchetes por depoimentos reais (com autorização) e remova a classe `placeholder`. Para adicionar mais, duplique um `<li class="slide">` e ajuste o `aria-label` ("1 de 3" etc.).
+
+### 7. Formulário "Solicite uma proposta"
+O formulário da seção `#contato` usa o **Netlify Forms** (gratuito até 100 envios/mês). Após o envio, o visitante vê a página `obrigado.html`.
+No painel do Netlify: **Forms → Enable form detection** (uma única vez) e, em **Forms → Form notifications**, adicione um aviso por e-mail para receber cada mensagem.
+
+### 8. Perguntas frequentes
+As perguntas ficam na seção `#duvidas` do `index.html` e também no bloco `FAQPage` (dados para o Google) no `<head>`. Ao alterar uma pergunta, atualize os dois lugares.
 
 ## Acessibilidade e desempenho
 - Estrutura semântica (um H1, H2 por seção, H3 nos itens), `alt` e `aria-label` em imagens e ícones.

@@ -61,6 +61,70 @@
     "knowsAbout": ["Gestão condominial", "Síndica profissional", "Gestão financeira de condomínios", "Manutenção predial", "Acompanhamento de obras"]
   }
   </script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Qual a diferença entre síndica profissional e administradora?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A administradora cuida da parte administrativa e contábil: emissão de boletos, folha de pagamento, contas e prestação de contas. A síndica é a representante legal do condomínio, eleita em assembleia, responsável pela gestão do dia a dia, pelas decisões e pelo acompanhamento de tudo o que acontece no prédio. Os dois papéis se complementam."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "O condomínio precisa trocar de administradora?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não. A síndica profissional trabalha em conjunto com a administradora do condomínio, acompanhando e cobrando os serviços prestados."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "A síndica precisa morar no condomínio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Não. O Código Civil (art. 1.347) permite que o síndico seja ou não condômino. Por isso o condomínio pode eleger uma síndica profissional externa."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Como funciona a contratação?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O primeiro passo é uma conversa para entender a realidade e as necessidades do condomínio. Em seguida, apresento uma proposta, que é levada à assembleia para votação, conforme as regras da convenção do condomínio."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Por quanto tempo dura o mandato?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Pelo Código Civil, o mandato do síndico é de até dois anos, podendo ser renovado. O prazo exato segue o que a convenção do condomínio determinar."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quanto custa uma síndica profissional?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "O valor depende do porte do condomínio, do número de unidades e da complexidade da gestão. Após uma conversa inicial, apresento uma proposta sob medida."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Em quais regiões você atua?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Atuo em condomínios de Jacarepaguá e da Zona Norte do Rio de Janeiro. Se o seu condomínio fica em outra região, entre em contato para conversarmos."
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 
@@ -107,7 +171,7 @@
           <li><a class="nav__link" href="#servicos">Serviços</a></li>
           <li><a class="nav__link" href="#diferenciais">Diferenciais</a></li>
           <li><a class="nav__link" href="#experiencia">Experiência</a></li>
-          <li><a class="nav__link" href="#depoimentos">Depoimentos</a></li>
+          <li><a class="nav__link" href="#duvidas">Dúvidas</a></li>
           <li><a class="nav__link" href="#contato">Contato</a></li>
         </ul>
         <a class="btn btn--primary btn--sm nav__cta" data-whatsapp href="https://wa.me/5521981360537" target="_blank" rel="noopener">
@@ -365,7 +429,8 @@
     </section>
 
     <!-- ================= 8. EXPERIÊNCIA NA PRÁTICA ================= -->
-    <section class="section section--light cases" id="na-pratica" aria-labelledby="pratica-title">
+    <!-- OCULTA até haver casos e fotos reais: para exibir, remova o atributo "hidden" abaixo -->
+    <section class="section section--light cases" id="na-pratica" aria-labelledby="pratica-title" hidden>
       <div class="container">
         <header class="section-head">
           <p class="eyebrow reveal">Experiência na prática</p>
@@ -415,7 +480,8 @@
     </section>
 
     <!-- ================= 9. DEPOIMENTOS ================= -->
-    <section class="section testimonials" id="depoimentos" aria-labelledby="depoimentos-title">
+    <!-- OCULTA até haver depoimentos reais: para exibir, remova o atributo "hidden" abaixo e volte o link "Depoimentos" no menu e no rodapé -->
+    <section class="section testimonials" id="depoimentos" aria-labelledby="depoimentos-title" hidden>
       <div class="container">
         <header class="section-head section-head--split">
           <div>
@@ -466,23 +532,123 @@
       </div>
     </section>
 
+    <!-- ================= PERGUNTAS FREQUENTES ================= -->
+    <section class="section section--light faq" id="duvidas" aria-labelledby="duvidas-title">
+      <div class="container faq__grid">
+        <header class="section-head">
+          <p class="eyebrow reveal">Dúvidas frequentes</p>
+          <h2 class="section-title reveal" id="duvidas-title">O que você precisa saber antes de contratar.</h2>
+          <p class="faq__more reveal">Ficou com alguma dúvida? <a href="#contato">Fale comigo</a>.</p>
+        </header>
+        <div class="faq__list">
+          <details class="faq__item reveal">
+            <summary><h3>Qual a diferença entre síndica profissional e administradora?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>A administradora cuida da parte administrativa e contábil: emissão de boletos, folha de pagamento, contas e prestação de contas. A síndica é a representante legal do condomínio, eleita em assembleia, responsável pela gestão do dia a dia, pelas decisões e pelo acompanhamento de tudo o que acontece no prédio. Os dois papéis se complementam.</p></div>
+          </details>
+          <details class="faq__item reveal">
+            <summary><h3>O condomínio precisa trocar de administradora?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Não. A síndica profissional trabalha em conjunto com a administradora do condomínio, acompanhando e cobrando os serviços prestados.</p></div>
+          </details>
+          <details class="faq__item reveal">
+            <summary><h3>A síndica precisa morar no condomínio?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Não. O Código Civil (art. 1.347) permite que o síndico seja ou não condômino. Por isso o condomínio pode eleger uma síndica profissional externa.</p></div>
+          </details>
+          <details class="faq__item reveal">
+            <summary><h3>Como funciona a contratação?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>O primeiro passo é uma conversa para entender a realidade e as necessidades do condomínio. Em seguida, apresento uma proposta, que é levada à assembleia para votação, conforme as regras da convenção do condomínio.</p></div>
+          </details>
+          <details class="faq__item reveal">
+            <summary><h3>Por quanto tempo dura o mandato?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Pelo Código Civil, o mandato do síndico é de até dois anos, podendo ser renovado. O prazo exato segue o que a convenção do condomínio determinar.</p></div>
+          </details>
+          <details class="faq__item reveal">
+            <summary><h3>Quanto custa uma síndica profissional?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>O valor depende do porte do condomínio, do número de unidades e da complexidade da gestão. Após uma conversa inicial, apresento uma proposta sob medida.</p></div>
+          </details>
+          <details class="faq__item reveal">
+            <summary><h3>Em quais regiões você atua?</h3><span class="faq__icon" aria-hidden="true"></span></summary>
+            <div class="faq__answer"><p>Atuo em condomínios de Jacarepaguá e da Zona Norte do Rio de Janeiro. Se o seu condomínio fica em outra região, entre em contato para conversarmos.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
     <!-- ================= 10. CTA FINAL ================= -->
     <section class="cta" id="contato" aria-labelledby="contato-title">
       <div class="cta__media" aria-hidden="true"></div>
       <div class="container cta__inner">
-        <span class="line" aria-hidden="true"></span>
-        <h2 class="cta__title reveal" id="contato-title">Vamos conversar sobre o seu condomínio?</h2>
-        <p class="cta__lead reveal">Se você está procurando uma síndica profissional para assumir a gestão do seu condomínio em Jacarepaguá, na Zona Norte ou em outra região do Rio de Janeiro, vamos conversar.</p>
-        <div class="cta__actions reveal">
-          <a class="btn btn--primary" data-whatsapp href="https://wa.me/5521981360537" target="_blank" rel="noopener">
-            <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
-            Fale comigo pelo WhatsApp
-          </a>
-          <a class="btn btn--ghost" data-email href="mailto:natalia.gestao.condominial@gmail.com">
-            Entrar em contato
-            <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
-          </a>
+        <div class="cta__text">
+          <span class="line" aria-hidden="true"></span>
+          <h2 class="cta__title reveal" id="contato-title">Vamos conversar sobre o seu condomínio?</h2>
+          <p class="cta__lead reveal">Se você está procurando uma síndica profissional para assumir a gestão do seu condomínio em Jacarepaguá, na Zona Norte ou em outra região do Rio de Janeiro, vamos conversar.</p>
+          <div class="cta__actions reveal">
+            <a class="btn btn--primary" data-whatsapp href="https://wa.me/5521981360537" target="_blank" rel="noopener">
+              <svg class="icon" aria-hidden="true"><use href="#i-whatsapp"/></svg>
+              Fale comigo pelo WhatsApp
+            </a>
+          </div>
+          <p class="cta__mail reveal">
+            <svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg>
+            <span>ou escreva para <a data-contact="email" href="mailto:natalia.gestao.condominial@gmail.com">natalia.gestao.condominial@gmail.com</a></span>
+          </p>
         </div>
+
+        <!-- Formulário: as mensagens chegam pelo Netlify Forms (painel do Netlify → Forms) -->
+        <form class="form reveal" id="proposta" name="proposta" method="POST" action="/obrigado.html" data-netlify="true" netlify-honeypot="empresa-site" aria-labelledby="form-title">
+          <input type="hidden" name="form-name" value="proposta">
+          <p class="form__hp" aria-hidden="true"><label>Não preencha: <input name="empresa-site" tabindex="-1" autocomplete="off"></label></p>
+
+          <h3 class="form__title" id="form-title">Solicite uma proposta</h3>
+          <p class="form__intro">Preencha os dados abaixo e eu retorno o contato.</p>
+
+          <div class="form__grid">
+            <div class="field field--full">
+              <label for="f-nome">Nome <span aria-hidden="true">*</span></label>
+              <input id="f-nome" name="nome" type="text" autocomplete="name" required>
+            </div>
+            <div class="field">
+              <label for="f-telefone">WhatsApp / telefone <span aria-hidden="true">*</span></label>
+              <input id="f-telefone" name="telefone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(21) 90000-0000" required>
+            </div>
+            <div class="field">
+              <label for="f-email">E-mail</label>
+              <input id="f-email" name="email" type="email" autocomplete="email">
+            </div>
+            <div class="field">
+              <label for="f-condominio">Nome do condomínio</label>
+              <input id="f-condominio" name="condominio" type="text">
+            </div>
+            <div class="field">
+              <label for="f-bairro">Bairro</label>
+              <input id="f-bairro" name="bairro" type="text" autocomplete="address-level3">
+            </div>
+            <div class="field">
+              <label for="f-unidades">Nº de unidades</label>
+              <input id="f-unidades" name="unidades" type="number" min="1" inputmode="numeric">
+            </div>
+            <div class="field">
+              <label for="f-perfil">Você é</label>
+              <select id="f-perfil" name="perfil">
+                <option value="">Selecione</option>
+                <option>Síndico(a) atual</option>
+                <option>Membro do conselho</option>
+                <option>Morador(a) / condômino(a)</option>
+                <option>Administradora</option>
+                <option>Outro</option>
+              </select>
+            </div>
+            <div class="field field--full">
+              <label for="f-mensagem">Como posso ajudar?</label>
+              <textarea id="f-mensagem" name="mensagem" rows="4"></textarea>
+            </div>
+          </div>
+
+          <button class="btn btn--primary form__submit" type="submit">
+            Enviar solicitação
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg>
+          </button>
+          <p class="form__note">Seus dados serão usados apenas para retornar o seu contato. <span aria-hidden="true">*</span> Campos obrigatórios.</p>
+        </form>
       </div>
     </section>
   </main>
@@ -518,7 +684,7 @@
           <li><a href="#sobre-mim">Sobre mim</a></li>
           <li><a href="#servicos">Serviços</a></li>
           <li><a href="#diferenciais">Diferenciais</a></li>
-          <li><a href="#depoimentos">Depoimentos</a></li>
+          <li><a href="#duvidas">Dúvidas</a></li>
           <li><a href="#contato">Contato</a></li>
         </ul>
       </nav>
