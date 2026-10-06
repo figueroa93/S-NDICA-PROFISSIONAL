@@ -530,3 +530,11 @@ body.nav-open { overflow: hidden; }
   .js .reveal { opacity: 1; transform: none; }
   .hero__media { transform: none; }
 }
+
+/* ---------- Sobre mim: trajetória ---------- */
+.journey { margin-top: 36px; padding: 28px 28px 24px; background: var(--white); border-left: 2px solid var(--blue); display: grid; gap: 12px; }
+.journey__title { font-size: .8125rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--black); }
+.journey p { color: var(--text-muted); font-size: 1rem; }
+.journey__where { display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--text) !important; }
+.journey__where .icon { color: var(--blue-strong); margin-top: 3px; }
+.journey__where strong { color: var(--black); font-weight: 600; }
