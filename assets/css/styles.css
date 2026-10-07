@@ -597,3 +597,8 @@ body.nav-open { overflow: hidden; }
 .journey__where { display: flex; align-items: flex-start; gap: 10px; margin-top: 4px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--text) !important; }
 .journey__where .icon { color: var(--blue-strong); margin-top: 3px; }
 .journey__where strong { color: var(--black); font-weight: 600; }
+
+/* ---------- Experiência: bloco de texto ---------- */
+.stat--text { flex-direction: column; gap: 14px; justify-content: center; }
+.stat__text { margin: 0; color: var(--text-on-dark); font-size: 1.0625rem; line-height: 1.65; max-width: 420px; }
+.stat__text strong { color: var(--white); font-weight: 600; }
