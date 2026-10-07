@@ -46,11 +46,11 @@ As imagens atuais são ilustrações provisórias. Substitua por fotografias rea
 
 Ao trocar a foto da Natália, atualize também o `src` e mantenha o texto `alt`.
 
-### 4. Números (Experiência)
-Na seção `#experiencia`, altere o atributo `data-count` (e o número dentro do `<span>`). Use apenas dados verdadeiros e comprováveis.
+### 4. Experiência
+A seção `#experiencia` apresenta a experiência de forma qualitativa (texto, indicadores de competência e pilares), **sem contadores de quantidade de condomínios**. A menção à estrutura profissional em que a trajetória também foi construída é propositalmente secundária e sem números.
 
 ### 5. Casos reais (Experiência na prática)
-A seção `#na-pratica` está **oculta** (atributo `hidden`) até haver casos reais. Para exibir, remova `hidden` da tag `<section>`. Na seção, cada caso é um `<article class="case">`. Duplique para adicionar novos e troque os espaços de foto por `<img>` (instruções no comentário do HTML). Insira somente resultados reais.
+A seção `#na-pratica` mostra o método (Antes → Ação → Resultado). Há um modelo comentado no HTML para publicar casos reais com fotos. Insira somente resultados reais.
 
 ### 6. Depoimentos
 A seção `#depoimentos` está **oculta** (atributo `hidden`) até haver depoimentos reais. Para exibir, remova `hidden` da tag `<section>` e troque o link "Dúvidas" por "Depoimentos" no menu e no rodapé, se desejar. Na seção, substitua os textos entre colchetes por depoimentos reais (com autorização) e remova a classe `placeholder`. Para adicionar mais, duplique um `<li class="slide">` e ajuste o `aria-label` ("1 de 3" etc.).
