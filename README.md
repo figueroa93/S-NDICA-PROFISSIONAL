@@ -53,7 +53,7 @@ A seção `#experiencia` apresenta a experiência de forma qualitativa (texto, i
 A seção `#na-pratica` mostra o método (Antes → Ação → Resultado). Há um modelo comentado no HTML para publicar casos reais com fotos. Insira somente resultados reais.
 
 ### 6. Depoimentos
-A seção `#depoimentos` está **oculta** (atributo `hidden`) até haver depoimentos reais. Para exibir, remova `hidden` da tag `<section>` e troque o link "Dúvidas" por "Depoimentos" no menu e no rodapé, se desejar. Na seção, substitua os textos entre colchetes por depoimentos reais (com autorização) e remova a classe `placeholder`. Para adicionar mais, duplique um `<li class="slide">` e ajuste o `aria-label` ("1 de 3" etc.).
+A seção `#depoimentos` está visível com textos provisórios entre colchetes. Para ocultá-la, acrescente `hidden` na tag `<section>`. Na seção, substitua os textos entre colchetes por depoimentos reais (com autorização) e remova a classe `placeholder`. Para adicionar mais, duplique um `<li class="slide">` e ajuste o `aria-label` ("1 de 3" etc.).
 
 ### 7. Formulário "Solicite uma proposta"
 O formulário da seção `#contato` usa o **Netlify Forms** (gratuito até 100 envios/mês). Após o envio, o visitante vê a página `obrigado.html`.
