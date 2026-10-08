@@ -265,7 +265,8 @@ body.nav-open { overflow: hidden; }
 /* ---------- 2. Sobre mim ---------- */
 .about__grid { display: grid; gap: 56px; }
 .about__photo { margin: 0; position: relative; }
-.about__photo img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; background: var(--graphite); }
+.about__photo picture { display: block; }
+.about__photo img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 20%; background: var(--graphite); }
 .about__photo::before {
   content: ""; position: absolute; top: -14px; left: -14px; width: 88px; height: 88px;
   border-top: 2px solid var(--blue); border-left: 2px solid var(--blue); pointer-events: none;

@@ -40,7 +40,7 @@ As imagens atuais são ilustrações provisórias. Substitua por fotografias rea
 | Arquivo atual | Onde aparece | Sugestão |
 |---|---|---|
 | `assets/img/hero-condominio.svg` | Fundo do topo e do CTA final (`styles.css`: `.hero__media`, `.cta__media`) | Condomínio residencial moderno no RJ, 2400×1500 px |
-| `assets/img/natalia-figueroa.svg` | Seção "Sobre mim" (`index.html`) | Foto profissional da Natália, proporção 4:5 (ex.: 1200×1500) |
+| `assets/img/natalia-figueroa.webp` e `.jpg` | Seção "Sobre mim" (`index.html`) | Já é a foto real da Natália (960×1200, 4:5). Para trocar, substitua os dois arquivos mantendo os nomes |
 | `assets/img/textura-arquitetura.svg` | Fundo de "Meu jeito de administrar" (`.manifesto__media`) | Detalhe arquitetônico/área comum; o overlay escuro já é aplicado |
 | `assets/img/og-image.jpg` | Pré-visualização ao compartilhar o link | 1200×630 px |
 
