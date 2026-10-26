@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --cor: #1e3a5f;
+      --cor-clara: #e8eef6;
+      --texto: #111827;
+      --suave: #6b7280;
+      --borda: #d1d5db;
+      --fundo: #f3f4f6;
+      --livre: #ffffff;
+      --ocupado: #fee2e2;
+      --ocupado-texto: #991b1b;
+      --ok: #15803d;
+      --erro: #b91c1c;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 16px; line-height: 1.5; color: var(--texto); background: var(--fundo);
+      overflow-wrap: anywhere;
+    }
+    header { background: var(--cor); color: #fff; padding: 24px 16px; text-align: center; }
+    header h1 { margin: 0 0 4px; font-size: 22px; line-height: 1.25; }
+    header p { margin: 0; font-size: 14px; opacity: .9; }
+    main { max-width: 640px; margin: 0 auto; padding: 16px; }
+    section { background: #fff; border-radius: 12px; padding: 20px 16px; margin-bottom: 16px;
+              box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    h2 { font-size: 18px; margin: 0 0 12px; color: var(--cor); }
+    h2 .num { display: inline-flex; width: 26px; height: 26px; border-radius: 50%; background: var(--cor);
+              color: #fff; font-size: 14px; align-items: center; justify-content: center; margin-right: 8px; }
+    .resumo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .resumo div { background: var(--cor-clara); border-radius: 8px; padding: 10px 12px; }
+    .resumo b { display: block; font-size: 18px; color: var(--cor); }
+    .resumo span { font-size: 13px; color: var(--suave); }
+    .resumo .largo { grid-column: 1 / -1; }
+
+    /* Calendário */
+    .cal-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .cal-topo strong { font-size: 17px; text-transform: capitalize; }
+    .cal-topo button { width: 44px; height: 44px; border: 1px solid var(--borda); background: #fff;
+                       border-radius: 8px; font-size: 20px; cursor: pointer; color: var(--cor); }
+    .cal-topo button:disabled { opacity: .3; cursor: default; }
+    .cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+    .cal .sem { text-align: center; font-size: 12px; color: var(--suave); padding: 4px 0; }
+    .cal button { aspect-ratio: 1; min-height: 40px; border: 1px solid var(--borda); background: var(--livre);
+                  border-radius: 8px; font-size: 15px; cursor: pointer; padding: 0; color: var(--texto); }
+    .cal button:disabled { background: transparent; border-color: transparent; color: #c0c4cc; cursor: default; }
+    .cal button.ocupado { background: var(--ocupado); border-color: #fecaca; color: var(--ocupado-texto);
+                          text-decoration: line-through; }
+    .cal button.selecionado { background: var(--cor); border-color: var(--cor); color: #fff; font-weight: 700; }
+    .legenda { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; color: var(--suave); margin-top: 10px; }
+    .legenda i { display: inline-block; width: 14px; height: 14px; border-radius: 4px; vertical-align: -2px;
+                 margin-right: 4px; border: 1px solid var(--borda); }
+    .escolhida { margin-top: 12px; padding: 12px; border-radius: 8px; background: var(--cor-clara); display: none; }
+
+    /* Formulário */
+    label { display: block; font-weight: 600; margin: 12px 0 4px; }
+    input[type=text], input[type=email], input[type=tel], textarea {
+      width: 100%; padding: 12px; font-size: 16px; border: 1px solid var(--borda); border-radius: 8px;
+      font-family: inherit; background: #fff; color: var(--texto);
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    .isca { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .regulamento { max-height: 340px; overflow-y: auto; border: 1px solid var(--borda); border-radius: 8px;
+                   padding: 4px 14px; font-size: 14px; background: #fafafa; }
+    .regulamento h3 { font-size: 16px; }
+    .regulamento h4 { font-size: 15px; margin: 16px 0 6px; }
+    .regulamento ol, .regulamento ul { padding-left: 20px; }
+    .aceite { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-weight: 600; cursor: pointer; }
+    .aceite input { width: 22px; height: 22px; flex: 0 0 auto; margin: 1px 0 0; }
+    .botao { display: block; width: 100%; padding: 16px; font-size: 18px; font-weight: 700; border: 0;
+             border-radius: 10px; background: var(--ok); color: #fff; cursor: pointer; margin-top: 8px; }
+    .botao:disabled { opacity: .6; cursor: wait; }
+    .botao.sec { background: var(--cor); font-size: 16px; padding: 12px; }
+    .erro { display: none; margin-top: 12px; padding: 12px; border-radius: 8px; background: #fee2e2; color: #7f1d1d; }
+    .carregando { text-align: center; color: var(--suave); padding: 24px 0; }
+
+    /* Resultado */
+    #resultado { display: none; }
+    .sucesso { text-align: center; }
+    .sucesso .selo { font-size: 13px; font-weight: 700; color: #854d0e; background: #fef9c3; display: inline-block;
+                     padding: 4px 10px; border-radius: 999px; margin-bottom: 8px; }
+    .sucesso .protocolo { font-size: 22px; font-weight: 800; color: var(--cor); letter-spacing: .5px; }
+    #qrcode { display: flex; justify-content: center; margin: 16px auto; }
+    #qrcode img, #qrcode canvas { max-width: 100%; height: auto; }
+    .copia { width: 100%; font-family: monospace; font-size: 12px; min-height: 96px; word-break: break-all; }
+    .dados-pix { text-align: left; background: var(--cor-clara); border-radius: 8px; padding: 12px; margin: 12px 0; }
+    footer { text-align: center; color: var(--suave); font-size: 12px; padding: 8px 16px 32px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Reserva do Salão de Festas</h1>
+    <p>Condomínio Dom Duarte · Rua Barão, 663 - Praça Seca</p>
+  </header>
+
+  <main>
+    <div id="formulario">
+      <section>
+        <div class="resumo">
+          <div><b id="valor">…</b><span>valor da reserva (10% do salário mínimo)</span></div>
+          <div><b>5 a 180 dias</b><span>de antecedência</span></div>
+          <div class="largo">
+            <span>Uso a partir das 08h (horários incluem montagem e desmontagem)</span><br>
+            <span><strong>Dom a qui:</strong> som reduzido 21h · encerramento 22h</span><br>
+            <span><strong>Sex e sáb:</strong> som reduzido 22h · encerramento 00h</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2><span class="num">1</span>Escolha a data</h2>
+        <div id="cal-area"><div class="carregando">Carregando datas disponíveis…</div></div>
+        <div class="legenda">
+          <span><i></i>Livre</span>
+          <span><i style="background:var(--ocupado);border-color:#fecaca"></i>Ocupada</span>
+          <span><i style="background:var(--cor);border-color:var(--cor)"></i>Sua escolha</span>
+        </div>
+        <div class="escolhida" id="escolhida"></div>
+      </section>
+
+      <form id="form" novalidate>
+        <section>
+          <h2><span class="num">2</span>Seus dados</h2>
+          <label for="nome">Nome completo</label>
+          <input type="text" id="nome" name="nome" autocomplete="name" maxlength="80" required>
+          <label for="unidade">Apartamento</label>
+          <input type="text" id="unidade" name="unidade" maxlength="30" placeholder="Ex.: 302" required>
+          <label for="telefone">Telefone / WhatsApp</label>
+          <input type="tel" id="telefone" name="telefone" autocomplete="tel" maxlength="30" placeholder="(21) 99999-9999" required>
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" autocomplete="email" maxlength="120" required>
+          <label for="observacoes">Observações (opcional)</label>
+          <textarea id="observacoes" name="observacoes" maxlength="500" placeholder="Ex.: tipo de evento"></textarea>
+          <div class="isca" aria-hidden="true">
+            <label for="site">Não preencha</label>
+            <input type="text" id="site" name="site" tabindex="-1" autocomplete="off">
+          </div>
+        </section>
+
+        <section>
+          <h2><span class="num">3</span>Regulamento</h2>
+          <div class="regulamento" tabindex="0">
+            <?!= include('Regulamento') ?>
+          </div>
+          <label class="aceite">
+            <input type="checkbox" id="aceite" name="aceite">
+            <span>Li e concordo com o regulamento do Salão de Festas.</span>
+          </label>
+          <button type="submit" class="botao" id="enviar">Solicitar reserva</button>
+          <div class="erro" id="erro" role="alert"></div>
+        </section>
+      </form>
+    </div>
+
+    <div id="resultado">
+      <section class="sucesso">
+        <div class="selo">PRÉ-RESERVA</div>
+        <h2 style="margin-bottom:4px">Pedido registrado!</h2>
+        <p style="margin:0">Protocolo</p>
+        <div class="protocolo" id="r-protocolo"></div>
+        <p id="r-data"></p>
+        <p>Sua data fica <b>pré-reservada</b>. Ela só é confirmada após o pagamento.</p>
+      </section>
+
+      <section class="sucesso">
+        <h2>Pague com PIX</h2>
+        <p style="font-size:26px;font-weight:800;margin:0" id="r-valor"></p>
+        <div id="qrcode"></div>
+        <label for="r-copia" style="text-align:left">PIX copia e cola</label>
+        <textarea id="r-copia" class="copia" readonly></textarea>
+        <button type="button" class="botao sec" id="copiar">Copiar código PIX</button>
+        <div class="dados-pix" id="r-dados"></div>
+      </section>
+
+      <section>
+        <h2>Envie o comprovante</h2>
+        <p id="r-comprovante"></p>
+        <p>Você também recebeu tudo isso por e-mail. Quando a administração confirmar o pagamento, você receberá o e-mail <b>“Reserva confirmada”</b>.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer>Condomínio Dom Duarte · CNPJ 68.681.279/0001-50</footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    (function () {
+      var MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+      var SEMANA = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+      var info = null;          // dados vindos do servidor
+      var ocupadas = {};        // { 'AAAA-MM-DD': true }
+      var escolhida = '';       // data escolhida
+      var mesVisivel = null;    // { ano, mes } (mes 0-11)
+
+      function $(id) { return document.getElementById(id); }
+      function moeda(v) { return 'R$ ' + Number(v).toFixed(2).replace('.', ','); }
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+      function iso(a, m, d) { return a + '-' + pad(m + 1) + '-' + pad(d); }
+      function partes(s) { var p = s.split('-'); return { ano: +p[0], mes: +p[1] - 1, dia: +p[2] }; }
+      function diaSemana(s) { var p = partes(s); return new Date(Date.UTC(p.ano, p.mes, p.dia)).getUTCDay(); }
+      function dataBR(s) { var p = s.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; }
+
+      function mostrarErro(msg) {
+        var e = $('erro');
+        e.textContent = msg;
+        e.style.display = msg ? 'block' : 'none';
+      }
+
+      function carregar() {
+        google.script.run
+          .withSuccessHandler(function (dados) {
+            info = dados;
+            ocupadas = {};
+            dados.ocupadas.forEach(function (d) { ocupadas[d] = true; });
+            $('valor').textContent = moeda(dados.valor);
+            if (!mesVisivel) {
+              var p = partes(dados.dataMin);
+              mesVisivel = { ano: p.ano, mes: p.mes };
+            }
+            if (escolhida && ocupadas[escolhida]) escolher('');
+            desenharCalendario();
+          })
+          .withFailureHandler(function () {
+            $('cal-area').innerHTML = '<div class="carregando">Não foi possível carregar as datas. Recarregue a página.</div>';
+          })
+          .obterDadosIniciais();
+      }
+
+      function desenharCalendario() {
+        var a = mesVisivel.ano, m = mesVisivel.mes;
+        var min = partes(info.dataMin), max = partes(info.dataMax);
+        var primeiro = new Date(Date.UTC(a, m, 1)).getUTCDay();
+        var totalDias = new Date(Date.UTC(a, m + 1, 0)).getUTCDate();
+        var podeVoltar = a > min.ano || (a === min.ano && m > min.mes);
+        var podeAvancar = a < max.ano || (a === max.ano && m < max.mes);
+
+        var h = '<div class="cal-topo">' +
+          '<button type="button" id="ant" aria-label="Mês anterior"' + (podeVoltar ? '' : ' disabled') + '>‹</button>' +
+          '<strong>' + MESES[m] + ' ' + a + '</strong>' +
+          '<button type="button" id="prox" aria-label="Próximo mês"' + (podeAvancar ? '' : ' disabled') + '>›</button>' +
+          '</div><div class="cal">';
+        ['D','S','T','Q','Q','S','S'].forEach(function (s) { h += '<div class="sem">' + s + '</div>'; });
+        for (var i = 0; i < primeiro; i++) h += '<span></span>';
+        for (var d = 1; d <= totalDias; d++) {
+          var s = iso(a, m, d);
+          var foraDoPrazo = s < info.dataMin || s > info.dataMax;
+          var classe = ocupadas[s] && !foraDoPrazo ? 'ocupado' : (s === escolhida ? 'selecionado' : '');
+          var desab = foraDoPrazo || ocupadas[s];
+          var rotulo = dataBR(s) + (ocupadas[s] ? ' — ocupada' : foraDoPrazo ? ' — fora do prazo' : ' — livre');
+          h += '<button type="button" data-d="' + s + '" class="' + classe + '" aria-label="' + rotulo + '"' +
+               (desab ? ' disabled' : '') + '>' + d + '</button>';
+        }
+        h += '</div>';
+        $('cal-area').innerHTML = h;
+
+        $('ant').onclick = function () { mudarMes(-1); };
+        $('prox').onclick = function () { mudarMes(1); };
+        Array.prototype.forEach.call($('cal-area').querySelectorAll('.cal button'), function (b) {
+          b.onclick = function () { escolher(b.getAttribute('data-d')); };
+        });
+      }
+
+      function mudarMes(n) {
+        var m = mesVisivel.mes + n;
+        mesVisivel = { ano: mesVisivel.ano + Math.floor(m / 12), mes: ((m % 12) + 12) % 12 };
+        desenharCalendario();
+      }
+
+      function escolher(s) {
+        escolhida = s;
+        var box = $('escolhida');
+        if (!s) { box.style.display = 'none'; desenharCalendario(); return; }
+        var h = info.horarios[diaSemana(s)];
+        box.innerHTML = '<b>Data escolhida:</b> ' + SEMANA[diaSemana(s)] + ', ' + dataBR(s) +
+          '<br>Uso das ' + h.inicio + ' às ' + h.encerramento + ' · som reduzido às ' + h.somReduzido;
+        box.style.display = 'block';
+        desenharCalendario();
+        mostrarErro('');
+      }
+
+      $('form').addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        var f = ev.target;
+        var dados = {
+          nome: f.nome.value, unidade: f.unidade.value, telefone: f.telefone.value,
+          email: f.email.value, observacoes: f.observacoes.value, site: f.site.value,
+          aceite: f.aceite.checked, data: escolhida
+        };
+        if (!info) return mostrarErro('Aguarde as datas carregarem.');
+        if (!escolhida) return mostrarErro('Escolha uma data no calendário (passo 1).');
+        if (dados.nome.trim().length < 3) return mostrarErro('Informe seu nome completo.');
+        if (!dados.unidade.trim()) return mostrarErro('Informe o número do seu apartamento.');
+        if (dados.telefone.replace(/\D/g, '').length < 10) return mostrarErro('Informe um telefone com DDD.');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email.trim())) return mostrarErro('Informe um e-mail válido.');
+        if (!dados.aceite) return mostrarErro('Marque que leu e concorda com o regulamento.');
+
+        mostrarErro('');
+        var botao = $('enviar');
+        botao.disabled = true;
+        botao.textContent = 'Enviando…';
+        google.script.run
+          .withSuccessHandler(mostrarResultado)
+          .withFailureHandler(function (err) {
+            botao.disabled = false;
+            botao.textContent = 'Solicitar reserva';
+            mostrarErro((err && err.message) || 'Não foi possível concluir. Tente novamente.');
+            carregar();
+          })
+          .solicitarReserva(dados);
+      });
+
+      function mostrarResultado(r) {
+        $('formulario').style.display = 'none';
+        $('resultado').style.display = 'block';
+        $('r-protocolo').textContent = r.protocolo;
+        $('r-data').textContent = r.dataExtenso + ' — ' + r.horario;
+        $('r-valor').textContent = moeda(r.valor);
+        $('r-copia').value = r.pix;
+        $('r-dados').innerHTML = '';
+        [['Chave PIX (CNPJ)', r.chave], ['Favorecido', r.favorecido], ['Banco', r.banco]].forEach(function (l) {
+          var p = document.createElement('div');
+          p.innerHTML = l[0] + ': <b></b>';
+          p.querySelector('b').textContent = l[1];
+          $('r-dados').appendChild(p);
+        });
+        $('r-comprovante').innerHTML = 'Depois de pagar, envie o comprovante para <b>' + r.emailAdmin +
+          '</b> ou <b>' + r.telefoneAdmin + '</b>, informando o protocolo <b></b>.';
+        $('r-comprovante').querySelectorAll('b')[2].textContent = r.protocolo;
+        try {
+          new QRCode($('qrcode'), { text: r.pix, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.M });
+        } catch (e) {
+          $('qrcode').style.display = 'none';
+        }
+        window.scrollTo(0, 0);
+      }
+
+      $('copiar').addEventListener('click', function () {
+        var campo = $('r-copia');
+        var botao = this;
+        function ok() { botao.textContent = 'Código copiado!'; setTimeout(function () { botao.textContent = 'Copiar código PIX'; }, 2500); }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(campo.value).then(ok, function () { campo.select(); document.execCommand('copy'); ok(); });
+        } else {
+          campo.select(); document.execCommand('copy'); ok();
+        }
+      });
+
+      carregar();
+    })();
+  </script>
+</body>
+</html>
