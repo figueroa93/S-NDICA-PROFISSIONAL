@@ -37,7 +37,27 @@
     .resumo div { background: var(--cor-clara); border-radius: 8px; padding: 10px 12px; }
     .resumo b { display: block; font-size: 18px; color: var(--cor); }
     .resumo span { font-size: 13px; color: var(--suave); }
-    .resumo .largo { grid-column: 1 / -1; }
+
+    /* Regras principais */
+    .regras h2 { margin-bottom: 4px; }
+    .regras-intro { margin: 0 0 14px; font-size: 14px; color: var(--suave); }
+    .regra { border-left: 5px solid; border-radius: 8px; padding: 12px 14px; margin-top: 12px; }
+    .regra h3 { margin: 0 0 6px; font-size: 16px; }
+    .regra ul { margin: 0; padding-left: 20px; font-size: 15px; }
+    .regra li { margin: 4px 0; }
+    .regra table { width: 100%; border-collapse: collapse; margin: 4px 0 8px; font-size: 15px;
+                   background: #fff; border-radius: 6px; overflow: hidden; }
+    .regra th, .regra td { padding: 8px 6px; text-align: center; border-bottom: 1px solid #dbe4f0; }
+    .regra thead th { font-size: 12px; color: var(--suave); font-weight: 600; }
+    .regra tbody th { text-align: left; }
+    .regra td { font-size: 18px; font-weight: 800; color: var(--cor); }
+    .regra tr:last-child th, .regra tr:last-child td { border-bottom: 0; }
+    .regra.horario { background: #eef4fb; border-color: #1e3a5f; }
+    .regra.som { background: #fff7e6; border-color: #d97706; }
+    .regra.proibido { background: #fef2f2; border-color: #b91c1c; }
+    .regra.proibido h3 { color: #991b1b; }
+    .regra.convidados { background: #f0fdf4; border-color: #15803d; }
+    .regra.limpeza { background: #f5f3ff; border-color: #6d28d9; }
 
     /* Calendário */
     .cal-topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
@@ -105,11 +125,65 @@
         <div class="resumo">
           <div><b id="valor">…</b><span>valor da reserva (10% do salário mínimo)</span></div>
           <div><b>5 a 180 dias</b><span>de antecedência</span></div>
-          <div class="largo">
-            <span>Uso a partir das 08h (horários incluem montagem e desmontagem)</span><br>
-            <span><strong>Dom a qui:</strong> som reduzido 21h · encerramento 22h</span><br>
-            <span><strong>Sex e sáb:</strong> som reduzido 22h · encerramento 00h</span>
-          </div>
+        </div>
+      </section>
+
+      <section class="regras" aria-labelledby="titulo-regras">
+        <h2 id="titulo-regras">Regras principais</h2>
+        <p class="regras-intro">Leia antes de reservar. O descumprimento pode gerar advertência, multa e interrupção do evento.</p>
+
+        <div class="regra horario">
+          <h3><span aria-hidden="true">🕗</span> Horários</h3>
+          <table>
+            <thead><tr><th></th><th>Som reduzido</th><th>Encerramento</th></tr></thead>
+            <tbody>
+              <tr><th>Dom a qui</th><td>21h</td><td>22h</td></tr>
+              <tr><th>Sex e sáb</th><td>22h</td><td>00h</td></tr>
+            </tbody>
+          </table>
+          <ul>
+            <li>Uso a partir das <b>08h</b>.</li>
+            <li>Os horários <b>incluem montagem e desmontagem</b>. Não é permitido ficar no salão após o encerramento.</li>
+          </ul>
+        </div>
+
+        <div class="regra som">
+          <h3><span aria-hidden="true">🔊</span> Som</h3>
+          <ul>
+            <li>Volume sempre <b>moderado</b>, respeitando o sossego dos vizinhos.</li>
+            <li><b>Proibidos:</b> mesa de som, karaokê, instrumentos musicais e bandas.</li>
+            <li>Proibidas caixas de som externas ou voltadas para as áreas comuns.</li>
+            <li>Com reclamações repetidas, a administração pode interromper o evento.</li>
+          </ul>
+        </div>
+
+        <div class="regra proibido">
+          <h3><span aria-hidden="true">🚫</span> Não é permitido</h3>
+          <ul>
+            <li>Fogos de artifício, churrasqueira portátil ou materiais inflamáveis.</li>
+            <li>Substâncias ilícitas.</li>
+            <li>Pernoite ou permanência após o horário.</li>
+            <li>Eventos comerciais, abertos ao público, com venda de ingressos, políticos ou religiosos.</li>
+          </ul>
+        </div>
+
+        <div class="regra convidados">
+          <h3><span aria-hidden="true">👥</span> Convidados e espaço</h3>
+          <ul>
+            <li>Convidados <b>não podem usar o estacionamento</b> do condomínio.</li>
+            <li>Mesas e cadeiras <b>somente dentro da área com pintura cinza</b> no chão.</li>
+            <li>Áreas comuns externas: apenas para circulação.</li>
+            <li>Respeite a capacidade máxima do salão. Crianças sempre supervisionadas.</li>
+          </ul>
+        </div>
+
+        <div class="regra limpeza">
+          <h3><span aria-hidden="true">🧹</span> Limpeza, danos e cancelamento</h3>
+          <ul>
+            <li>Entregue o salão <b>limpo, com o lixo recolhido, até 1 hora após o encerramento</b>.</li>
+            <li>Danos ao patrimônio são de responsabilidade do morador que reservou.</li>
+            <li>Cancelamento com <b>no mínimo 48 horas</b> de antecedência; depois disso não há reembolso, salvo força maior comprovada.</li>
+          </ul>
         </div>
       </section>
 
