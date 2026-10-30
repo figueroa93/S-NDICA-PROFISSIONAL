@@ -6,6 +6,11 @@ prestadores de serviço. Os dados vão para a aba **Entradas** da planilha
 e as fotos para a pasta **Fotos - Entrada de Prestadores** no Drive da conta
 `domduartecondominio@gmail.com`.
 
+**Link do app:** https://script.google.com/macros/s/AKfycbx2Ipu0L9auCZQ3zF5X1sACAR0UAAeiss_EC7xXtH7qJOPY1KRmGJE7EEXdyUHywfTb/exec
+**deploymentId:** `AKfycbx2Ipu0L9auCZQ3zF5X1sACAR0UAAeiss_EC7xXtH7qJOPY1KRmGJE7EEXdyUHywfTb`
+**Editor do script:** https://script.google.com/d/1MtoFmuN-3Aqbmj_EZJ_9KVJ9hBth0ajhGYBzLE6u_loFHuVp-zL5_jei/edit
+(também em Planilha → Extensões → Apps Script)
+
 | Arquivo | O que é |
 |---|---|
 | `Code.gs` | Servidor: `doGet`, `verificarPin`, `registrarEntrada`, `registrarSaida`, `listarEntradas`, `obterFoto`, `configurarPlanilha` |
@@ -26,8 +31,7 @@ nova *versão* na implantação existente — nunca crie uma "Nova implantação
 **Pelo terminal (clasp):**
 ```bash
 clasp push
-clasp deployments            # mostra o deploymentId (AKfy...)
-clasp deploy -i <deploymentId> -d "descrição da mudança"
+clasp deploy -i AKfycbx2Ipu0L9auCZQ3zF5X1sACAR0UAAeiss_EC7xXtH7qJOPY1KRmGJE7EEXdyUHywfTb -d "descrição da mudança"
 ```
 
 ## Ativar o PIN
