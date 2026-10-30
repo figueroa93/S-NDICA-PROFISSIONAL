@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Portaria">
+<meta name="theme-color" content="#0B3352">
+<title>Portaria · Prestadores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=JetBrains+Mono:wght@400;600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --mar: #0B3352;
+    --mar-2: #124670;
+    --ouro: #B48A2C;
+    --ouro-claro: #D4AE5C;
+    --cinza-1: #ECEEF1;
+    --cinza-2: #E2E5EA;
+    --cinza-3: #5D6672;
+    --branco: #FFFFFF;
+    --verde: #1E7A4C;
+    --verde-bg: #DDF2E6;
+    --vermelho: #B42318;
+    --vermelho-bg: #FDE8E6;
+
+    --bg: var(--cinza-1);
+    --surface: var(--branco);
+    --surface-2: #F6F7F9;
+    --line: var(--cinza-2);
+    --text: #18212B;
+    --muted: var(--cinza-3);
+    --accent: var(--mar);
+    --accent-text: var(--branco);
+    --highlight: var(--ouro);
+    --input-bg: var(--branco);
+    --shadow: 0 1px 2px rgba(11, 51, 82, .06), 0 6px 20px rgba(11, 51, 82, .07);
+    --font-titulo: 'Archivo', system-ui, sans-serif;
+    --font-texto: 'Public Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #061A2B;
+      --surface: #0B2740;
+      --surface-2: #0E2F4C;
+      --line: #1A4366;
+      --text: #E9EEF4;
+      --muted: #9FB0C2;
+      --accent: var(--ouro-claro);
+      --accent-text: #061A2B;
+      --highlight: var(--ouro-claro);
+      --input-bg: #082036;
+      --verde: #6FD3A0;
+      --verde-bg: rgba(111, 211, 160, .14);
+      --vermelho: #FF9C92;
+      --vermelho-bg: rgba(255, 156, 146, .12);
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.45 var(--font-texto);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  a { color: var(--highlight); }
+
+  /* Topo */
+  .topo {
+    background: var(--mar);
+    color: var(--branco);
+    padding: 14px 16px 64px;
+    border-bottom: 3px solid var(--ouro);
+  }
+  .topo-in { max-width: 1320px; margin: 0 auto; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .marca { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+  .selo {
+    width: 40px; height: 40px; border-radius: 10px; flex: none;
+    background: var(--ouro); color: var(--mar);
+    display: grid; place-items: center;
+    font: 800 18px/1 var(--font-titulo);
+  }
+  .marca h1 { margin: 0; font: 800 20px/1.1 var(--font-titulo); letter-spacing: -.01em; }
+  .marca h1 span { color: var(--ouro-claro); }
+  .marca p { margin: 2px 0 0; font: 400 11px/1.2 var(--font-mono); color: #A9BCD0; text-transform: uppercase; letter-spacing: .08em; }
+
+  .contadores {
+    max-width: 1320px; margin: -48px auto 0; padding: 0 16px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  }
+  .contador {
+    background: var(--surface); border-radius: 12px; padding: 12px 14px;
+    box-shadow: var(--shadow); border: 1px solid var(--line);
+  }
+  .contador b { display: block; font: 700 28px/1.1 var(--font-mono); color: var(--text); }
+  .contador.destaque b { color: var(--verde); }
+  .contador span { font: 600 11px/1.2 var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+
+  /* Layout */
+  main {
+    max-width: 1320px; margin: 16px auto 0; padding: 0 16px 24px;
+    display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 16px; align-items: start;
+  }
+  .card { background: var(--surface); border-radius: 14px; box-shadow: var(--shadow); border: 1px solid var(--line); }
+
+  /* Formulário-crachá */
+  .cracha { overflow: hidden; position: sticky; top: 12px; }
+  .faixa {
+    height: 14px;
+    background: repeating-linear-gradient(-45deg, var(--ouro) 0 12px, var(--mar) 12px 24px);
+  }
+  .cracha-corpo { padding: 16px 18px 18px; }
+  .cracha h2, .registros h2 { margin: 0; font: 700 18px/1.2 var(--font-titulo); }
+  .rotulo-sec { font: 600 11px/1 var(--font-mono); text-transform: uppercase; letter-spacing: .1em; color: var(--highlight); margin: 0 0 4px; }
+
+  .foto-area { display: flex; gap: 14px; align-items: center; margin: 14px 0 6px; }
+  .foto-previa {
+    width: 96px; aspect-ratio: 3 / 4; flex: none; border-radius: 10px; overflow: hidden;
+    background: var(--surface-2); border: 2px dashed var(--line);
+    display: grid; place-items: center; color: var(--muted);
+  }
+  .foto-previa.tem { border-style: solid; border-color: var(--ouro); }
+  .foto-previa img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .foto-previa svg { width: 38px; height: 38px; opacity: .6; }
+  .foto-acoes { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+  .foto-acoes small { color: var(--muted); font-size: 12px; }
+
+  .campo { margin-top: 12px; }
+  .campo label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 5px; }
+  .campo label i { color: var(--vermelho); font-style: normal; }
+  .campo input, .campo select, .campo textarea {
+    width: 100%; padding: 10px 12px; border-radius: 9px;
+    border: 1px solid var(--line); background: var(--input-bg);
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .campo textarea { min-height: 64px; resize: vertical; }
+  .campo input:focus, .campo select:focus, .campo textarea:focus {
+    border-color: var(--highlight); box-shadow: 0 0 0 3px rgba(180, 138, 44, .2);
+  }
+  .campo .erro-campo { color: var(--vermelho); font-size: 12px; margin-top: 4px; display: none; }
+  .campo.invalido input { border-color: var(--vermelho); }
+  .campo.invalido .erro-campo { display: block; }
+  .doc-linha { display: grid; grid-template-columns: 96px 1fr; gap: 8px; }
+  .dupla { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .doc-linha input, .num { font-family: var(--font-mono); }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    padding: 8px 12px; border-radius: 9px; cursor: pointer; font-weight: 600; font-size: 14px;
+    text-decoration: none; white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--highlight); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; }
+  .btn-pri { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+  .btn-pri:hover { filter: brightness(1.1); border-color: var(--accent); }
+  .btn-ouro { background: var(--ouro); border-color: var(--ouro); color: var(--branco); }
+  .btn-grande { width: 100%; padding: 13px; font-size: 16px; margin-top: 16px; font-family: var(--font-titulo); letter-spacing: .01em; }
+  .btn-peq { padding: 5px 10px; font-size: 13px; }
+  .btn-topo { background: transparent; color: var(--branco); border-color: rgba(255,255,255,.3); }
+  .btn-topo:hover { border-color: var(--ouro-claro); }
+
+  .aviso { margin-top: 12px; padding: 10px 12px; border-radius: 9px; font-size: 14px; display: none; }
+  .aviso.ok { display: block; background: var(--verde-bg); color: var(--verde); }
+  .aviso.erro { display: block; background: var(--vermelho-bg); color: var(--vermelho); }
+  .aviso b { font-family: var(--font-mono); }
+
+  /* Registros */
+  .registros { padding: 16px; min-width: 0; }
+  .reg-cab { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .reg-cab .atualizado { margin-left: auto; font: 400 12px var(--font-mono); color: var(--muted); }
+  .filtros { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; margin-bottom: 12px; }
+  .filtros input, .filtros select {
+    padding: 8px 10px; border-radius: 9px; border: 1px solid var(--line); background: var(--input-bg); min-width: 0;
+  }
+  .tabela-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--line); border-radius: 10px; }
+  table { width: 100%; border-collapse: collapse; min-width: 780px; }
+  th {
+    text-align: left; font: 600 11px/1.2 var(--font-mono); text-transform: uppercase; letter-spacing: .06em;
+    color: var(--muted); background: var(--surface-2); padding: 10px 8px; border-bottom: 1px solid var(--line); white-space: nowrap;
+  }
+  td { padding: 8px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 14px; }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: var(--surface-2); }
+  .mini {
+    width: 42px; height: 56px; border-radius: 6px; object-fit: cover; display: block;
+    background: var(--surface-2); border: 1px solid var(--line);
+  }
+  .mini.vazia { display: grid; place-items: center; color: var(--muted); font: 600 14px var(--font-titulo); }
+  .nome { font-weight: 600; }
+  .sub { color: var(--muted); font-size: 12.5px; }
+  .mono { font-family: var(--font-mono); font-size: 13px; white-space: nowrap; }
+  .pilula { display: inline-block; padding: 3px 10px; border-radius: 999px; font: 600 12px/1.4 var(--font-mono); white-space: nowrap; }
+  .pilula.no-local { background: var(--verde-bg); color: var(--verde); }
+  .pilula.saiu { background: var(--cinza-2); color: var(--cinza-3); }
+  @media (prefers-color-scheme: dark) { .pilula.saiu { background: rgba(255,255,255,.08); color: var(--muted); } }
+  .acoes { display: flex; gap: 6px; }
+  .vazio { text-align: center; color: var(--muted); padding: 32px 10px; }
+
+  footer { max-width: 1320px; margin: 0 auto; padding: 8px 16px 32px; color: var(--muted); font-size: 13px; display: flex; gap: 16px; flex-wrap: wrap; }
+
+  /* Modal / PIN */
+  .veu {
+    position: fixed; inset: 0; background: rgba(4, 18, 31, .6); display: none;
+    align-items: center; justify-content: center; padding: 16px; z-index: 50;
+  }
+  .veu.aberto { display: flex; }
+  .modal { width: 100%; max-width: 560px; max-height: calc(100vh - 32px); overflow: auto; }
+  .modal-corpo { padding: 18px; display: grid; grid-template-columns: 180px 1fr; gap: 18px; }
+  .modal-foto { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 10px; background: var(--surface-2); border: 1px solid var(--line); }
+  .modal-foto.vazia { display: grid; place-items: center; color: var(--muted); font-size: 13px; }
+  .modal h3 { margin: 0 0 2px; font: 700 20px/1.2 var(--font-titulo); }
+  dl { margin: 10px 0 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 14px; }
+  dt { font: 600 11px/1.9 var(--font-mono); text-transform: uppercase; color: var(--muted); letter-spacing: .05em; }
+  dd { margin: 0; word-break: break-word; }
+  .modal-rodape { padding: 0 18px 18px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .pin-box { max-width: 340px; text-align: center; }
+  .pin-box .cracha-corpo { padding: 22px; }
+  .pin-box input { text-align: center; font: 600 24px var(--font-mono); letter-spacing: .3em; }
+
+  .carregando { opacity: .6; pointer-events: none; }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: minmax(0, 1fr); }
+    .cracha { position: static; }
+  }
+  @media (max-width: 600px) {
+    .topo { padding-bottom: 58px; }
+    .marca h1 { font-size: 18px; }
+    .contadores { gap: 8px; }
+    .contador { padding: 10px; }
+    .contador b { font-size: 22px; }
+    .contador span { font-size: 9.5px; }
+    .filtros { grid-template-columns: 1fr 1fr; }
+    .filtros .busca { grid-column: 1 / -1; }
+    .modal-corpo { grid-template-columns: 1fr; }
+    .modal-foto { max-width: 220px; margin: 0 auto; }
+    .dupla { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo-in">
+    <div class="marca">
+      <div class="selo">P</div>
+      <div>
+        <h1>Portaria <span>·</span> Prestadores</h1>
+        <p>Registro de entrada e saída</p>
+      </div>
+    </div>
+    <button class="btn btn-topo btn-peq" id="btnSairPin" hidden>Trocar PIN</button>
+  </div>
+</header>
+
+<section class="contadores" aria-label="Resumo">
+  <div class="contador destaque"><b id="cNoLocal">–</b><span>No local agora</span></div>
+  <div class="contador"><b id="cHoje">–</b><span>Entradas hoje</span></div>
+  <div class="contador"><b id="cTotal">–</b><span>Últimos registros</span></div>
+</section>
+
+<main>
+  <!-- Nova entrada -->
+  <form class="card cracha" id="form" novalidate autocomplete="off">
+    <div class="faixa"></div>
+    <div class="cracha-corpo">
+      <p class="rotulo-sec">Prestador de serviço</p>
+      <h2>Nova entrada</h2>
+
+      <div class="foto-area">
+        <div class="foto-previa" id="fotoPrevia">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+        </div>
+        <div class="foto-acoes">
+          <label class="btn btn-ouro" for="foto">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h3l2-3h6l2 3h3v13H4z"/><circle cx="12" cy="13" r="4"/></svg>
+            Tirar / anexar foto
+          </label>
+          <input type="file" id="foto" accept="image/*" capture="environment" hidden>
+          <button type="button" class="btn btn-peq" id="btnRemoverFoto" hidden>Remover foto</button>
+          <small id="fotoInfo">Foto do rosto, de frente.</small>
+        </div>
+      </div>
+
+      <div class="campo" id="cNome">
+        <label for="nome">Nome completo <i>*</i></label>
+        <input id="nome" maxlength="120" autocapitalize="words" required>
+        <div class="erro-campo">Informe o nome completo.</div>
+      </div>
+
+      <div class="campo" id="cDoc">
+        <label for="documento">Documento <i>*</i></label>
+        <div class="doc-linha">
+          <select id="tipoDoc" aria-label="Tipo de documento">
+            <option>CPF</option><option>RG</option><option>CNH</option><option>Outro</option>
+          </select>
+          <input id="documento" maxlength="40" inputmode="numeric" placeholder="000.000.000-00" required>
+        </div>
+        <div class="erro-campo" id="docErro">Informe o documento.</div>
+      </div>
+
+      <div class="campo" id="cEmpresa">
+        <label for="empresa">Empresa <i>*</i></label>
+        <input id="empresa" list="listaEmpresas" maxlength="120" required>
+        <datalist id="listaEmpresas"></datalist>
+        <div class="erro-campo">Informe a empresa.</div>
+      </div>
+
+      <div class="dupla">
+        <div class="campo" id="cUnidade">
+          <label for="unidade">Unidade de destino <i>*</i></label>
+          <input id="unidade" list="listaUnidades" maxlength="60" placeholder="Ex.: Apto 101" required>
+          <datalist id="listaUnidades"></datalist>
+          <div class="erro-campo">Informe a unidade.</div>
+        </div>
+        <div class="campo">
+          <label for="servico">Serviço / motivo</label>
+          <input id="servico" maxlength="200" placeholder="Ex.: Manutenção">
+        </div>
+      </div>
+
+      <div class="campo">
+        <label for="observacoes">Observações</label>
+        <textarea id="observacoes" maxlength="500"></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-pri btn-grande" id="btnRegistrar">Registrar entrada</button>
+      <div class="aviso" id="avisoForm" role="status"></div>
+    </div>
+  </form>
+
+  <!-- Registros -->
+  <section class="card registros" aria-labelledby="tituloReg">
+    <div class="reg-cab">
+      <div>
+        <p class="rotulo-sec">Histórico</p>
+        <h2 id="tituloReg">Registros</h2>
+      </div>
+      <span class="atualizado" id="atualizado"></span>
+      <button class="btn btn-peq" id="btnAtualizar" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg>
+        Atualizar
+      </button>
+    </div>
+    <div class="filtros">
+      <input class="busca" id="busca" type="search" placeholder="Buscar nome, documento, empresa, unidade…">
+      <select id="fStatus" aria-label="Filtrar status">
+        <option value="">Todos</option>
+        <option value="No local">No local</option>
+        <option value="Saiu">Saíram</option>
+      </select>
+      <input id="fData" type="date" aria-label="Filtrar por data">
+      <button class="btn btn-peq" id="btnLimpar" type="button">Limpar</button>
+    </div>
+    <div class="aviso" id="avisoLista" role="status"></div>
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Foto</th><th>Nome / serviço</th><th>Documento</th><th>Empresa</th><th>Unidade</th>
+            <th>Entrada</th><th>Saída</th><th>Status</th><th></th>
+          </tr>
+        </thead>
+        <tbody id="corpo"><tr><td colspan="9" class="vazio">Carregando registros…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <a href="<?= planilhaUrl ?>" target="_blank" rel="noopener">Abrir planilha</a>
+  <span>Atualização automática a cada 60 s</span>
+</footer>
+
+<!-- Detalhes -->
+<div class="veu" id="veuDetalhe" role="dialog" aria-modal="true" aria-labelledby="dNome">
+  <div class="card modal cracha" style="position:static">
+    <div class="faixa"></div>
+    <div class="modal-corpo" id="detalheCorpo"></div>
+    <div class="modal-rodape" id="detalheRodape"></div>
+  </div>
+</div>
+
+<!-- PIN -->
+<div class="veu" id="veuPin" role="dialog" aria-modal="true" aria-labelledby="pinTitulo">
+  <form class="card cracha pin-box" id="formPin" style="position:static">
+    <div class="faixa"></div>
+    <div class="cracha-corpo">
+      <p class="rotulo-sec">Acesso restrito</p>
+      <h2 id="pinTitulo">Digite o PIN da portaria</h2>
+      <div class="campo"><input id="pin" type="password" inputmode="numeric" autocomplete="off" maxlength="20" aria-label="PIN"></div>
+      <button class="btn btn-pri btn-grande" type="submit">Entrar</button>
+      <div class="aviso" id="avisoPin"></div>
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var CHAVE_PIN = 'portaria_prestadores_pin';
+  var estado = { pin: lerPin(), registros: [], foto: null, miniatura: null, carregando: false, timer: null };
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- Servidor ---------- */
+  function chamar(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (resolve, reject) {
+      google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(function (e) { reject(e); })[fn].apply(null, args);
+    });
+  }
+  function msgErro(e) {
+    var m = (e && (e.message || e.toString())) || 'Erro desconhecido.';
+    if (/PIN_INVALIDO/.test(m)) return 'PIN incorreto ou não informado.';
+    if (/NetworkError|network|Failed to fetch|desconectado/i.test(m)) return 'Sem conexão com a internet. Verifique a rede e tente de novo.';
+    if (/authoriz|autoriza|permission|permiss/i.test(m)) return 'O app não tem permissão para acessar a planilha. Peça ao administrador para autorizar o script.';
+    return m.replace(/^Error:\s*/, '').replace(/^Exception:\s*/, '');
+  }
+  function tratarErroPin(e) {
+    if (e && /PIN_INVALIDO/.test(e.message || String(e))) { pedirPin('PIN incorreto ou expirado.'); return true; }
+    return false;
+  }
+
+  /* ---------- PIN ---------- */
+  function lerPin() { try { return localStorage.getItem(CHAVE_PIN) || ''; } catch (e) { return ''; } }
+  function salvarPin(p) { try { if (p) localStorage.setItem(CHAVE_PIN, p); else localStorage.removeItem(CHAVE_PIN); } catch (e) {} }
+  function pedirPin(msg) {
+    pararTimer();
+    $('veuPin').classList.add('aberto');
+    aviso('avisoPin', msg ? 'erro' : '', msg || '');
+    setTimeout(function () { $('pin').focus(); }, 50);
+  }
+  $('formPin').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var p = $('pin').value.trim();
+    if (!p) return;
+    chamar('verificarPin', p).then(function (r) {
+      if (r.ok) {
+        estado.pin = p; salvarPin(p); $('pin').value = '';
+        $('veuPin').classList.remove('aberto');
+        $('btnSairPin').hidden = !r.exigePin;
+        iniciar();
+      } else {
+        aviso('avisoPin', 'erro', 'PIN incorreto.');
+      }
+    }).catch(function (e) { aviso('avisoPin', 'erro', msgErro(e)); });
+  });
+  $('btnSairPin').addEventListener('click', function () { salvarPin(''); estado.pin = ''; pedirPin(''); });
+
+  /* ---------- Utilidades ---------- */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function semAcento(s) { return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase(); }
+  function aviso(id, tipo, html) { var el = $(id); el.className = 'aviso' + (tipo ? ' ' + tipo : ''); el.innerHTML = html; }
+  function iniciais(nome) {
+    var p = String(nome || '').trim().split(/\s+/);
+    return ((p[0] || '')[0] || '') + (p.length > 1 ? p[p.length - 1][0] : '');
+  }
+
+  /* ---------- Foto ---------- */
+  function carregarImagem(file) {
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('Não foi possível ler a imagem. Tente outra foto.')); };
+      img.src = url;
+    });
+  }
+  function reduzir(img, max, qualidade) {
+    var w = img.naturalWidth, h = img.naturalHeight;
+    var s = Math.min(1, max / Math.max(w, h));
+    var c = document.createElement('canvas');
+    c.width = Math.round(w * s); c.height = Math.round(h * s);
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', qualidade);
+  }
+  function miniatura34(img, altura, qualidade) {
+    // recorte central 3x4
+    var w = img.naturalWidth, h = img.naturalHeight, sw, sh;
+    if (w / h > 3 / 4) { sh = h; sw = h * 3 / 4; } else { sw = w; sh = w * 4 / 3; }
+    var c = document.createElement('canvas');
+    c.height = altura; c.width = Math.round(altura * 3 / 4);
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(img, (w - sw) / 2, (h - sh) / 2, sw, sh, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', qualidade);
+  }
+  $('foto').addEventListener('change', function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    $('fotoInfo').textContent = 'Processando foto…';
+    carregarImagem(f).then(function (img) {
+      estado.foto = reduzir(img, 1000, 0.82);
+      estado.miniatura = miniatura34(img, 140, 0.7);
+      $('fotoPrevia').innerHTML = '<img alt="Prévia da foto" src="' + estado.foto + '">';
+      $('fotoPrevia').classList.add('tem');
+      $('btnRemoverFoto').hidden = false;
+      $('fotoInfo').textContent = 'Foto pronta (' + Math.round(estado.foto.length * 0.75 / 1024) + ' KB).';
+    }).catch(function (e) {
+      limparFoto();
+      $('fotoInfo').textContent = msgErro(e);
+    });
+  });
+  function limparFoto() {
+    estado.foto = null; estado.miniatura = null; $('foto').value = '';
+    $('fotoPrevia').classList.remove('tem');
+    $('fotoPrevia').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" style="width:38px;height:38px;opacity:.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>';
+    $('btnRemoverFoto').hidden = true;
+    $('fotoInfo').textContent = 'Foto do rosto, de frente.';
+  }
+  $('btnRemoverFoto').addEventListener('click', limparFoto);
+
+  /* ---------- Documento / CPF ---------- */
+  function mascaraCpf(v) {
+    var d = v.replace(/\D/g, '').slice(0, 11);
+    if (d.length > 9) return d.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+    if (d.length > 6) return d.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+    if (d.length > 3) return d.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+    return d;
+  }
+  function ajustarTipoDoc() {
+    var cpf = $('tipoDoc').value === 'CPF';
+    var el = $('documento');
+    el.setAttribute('inputmode', cpf ? 'numeric' : 'text');
+    el.placeholder = cpf ? '000.000.000-00' : 'Número do documento';
+    if (cpf) el.value = mascaraCpf(el.value);
+  }
+  $('tipoDoc').addEventListener('change', ajustarTipoDoc);
+  $('documento').addEventListener('input', function () {
+    if ($('tipoDoc').value === 'CPF') this.value = mascaraCpf(this.value);
+    $('cDoc').classList.remove('invalido');
+  });
+  ['nome', 'empresa', 'unidade'].forEach(function (id) {
+    $(id).addEventListener('input', function () { this.closest('.campo').classList.remove('invalido'); });
+  });
+
+  /* ---------- Registrar entrada ---------- */
+  function validar() {
+    var ok = true;
+    [['nome', 'cNome'], ['empresa', 'cEmpresa'], ['unidade', 'cUnidade']].forEach(function (p) {
+      var vazio = !$(p[0]).value.trim();
+      $(p[1]).classList.toggle('invalido', vazio);
+      if (vazio) ok = false;
+    });
+    var doc = $('documento').value.trim();
+    var msg = '';
+    if (!doc) msg = 'Informe o documento.';
+    else if ($('tipoDoc').value === 'CPF' && doc.replace(/\D/g, '').length !== 11) msg = 'O CPF precisa ter 11 dígitos.';
+    $('docErro').textContent = msg;
+    $('cDoc').classList.toggle('invalido', !!msg);
+    if (msg) ok = false;
+    if (!ok) {
+      var primeiro = document.querySelector('.campo.invalido input');
+      if (primeiro) primeiro.focus();
+    }
+    return ok;
+  }
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    aviso('avisoForm', '', '');
+    if (!validar()) { aviso('avisoForm', 'erro', 'Preencha os campos obrigatórios marcados com *.'); return; }
+    var btn = $('btnRegistrar');
+    btn.disabled = true; btn.textContent = 'Registrando…';
+    var dados = {
+      nome: $('nome').value, tipoDoc: $('tipoDoc').value, documento: $('documento').value,
+      empresa: $('empresa').value, unidade: $('unidade').value, servico: $('servico').value,
+      observacoes: $('observacoes').value, foto: estado.foto, miniatura: estado.miniatura
+    };
+    chamar('registrarEntrada', estado.pin, dados).then(function (r) {
+      aviso('avisoForm', 'ok', '✔ Entrada registrada em <b>' + esc(r.entradaTxt) + '</b> · ' + esc(dados.nome.trim()));
+      ['nome', 'documento', 'empresa', 'unidade', 'servico', 'observacoes'].forEach(function (id) { $(id).value = ''; });
+      limparFoto();
+      carregar();
+    }).catch(function (e) {
+      if (!tratarErroPin(e)) aviso('avisoForm', 'erro', esc(msgErro(e)));
+    }).then(function () {
+      btn.disabled = false; btn.textContent = 'Registrar entrada';
+    });
+  });
+
+  /* ---------- Lista ---------- */
+  function carregar() {
+    if (estado.carregando) return Promise.resolve();
+    estado.carregando = true;
+    $('btnAtualizar').disabled = true;
+    return chamar('listarEntradas', estado.pin, { data: $('fData').value || '' }).then(function (r) {
+      estado.registros = r.registros || [];
+      $('cNoLocal').textContent = r.noLocal;
+      $('cHoje').textContent = r.entradasHoje;
+      $('cTotal').textContent = estado.registros.length;
+      $('atualizado').textContent = 'Atualizado às ' + r.atualizadoTxt;
+      preencherLista('listaEmpresas', r.empresas);
+      preencherLista('listaUnidades', r.unidades);
+      aviso('avisoLista', '', '');
+      desenhar();
+    }).catch(function (e) {
+      if (!tratarErroPin(e)) aviso('avisoLista', 'erro', 'Não foi possível carregar os registros: ' + esc(msgErro(e)));
+    }).then(function () {
+      estado.carregando = false;
+      $('btnAtualizar').disabled = false;
+    });
+  }
+  function preencherLista(id, itens) {
+    $(id).innerHTML = (itens || []).map(function (v) { return '<option value="' + esc(v) + '">'; }).join('');
+  }
+  function filtrados() {
+    var q = semAcento($('busca').value.trim());
+    var st = $('fStatus').value;
+    return estado.registros.filter(function (r) {
+      if (st && r.status !== st) return false;
+      if (!q) return true;
+      var alvo = semAcento([r.nome, r.documento, r.documento.replace(/\D/g, ''), r.empresa, r.unidade, r.servico, r.observacoes, r.id].join(' '));
+      return alvo.indexOf(q) >= 0;
+    });
+  }
+  function desenhar() {
+    var lista = filtrados();
+    if (!lista.length) {
+      $('corpo').innerHTML = '<tr><td colspan="9" class="vazio">' +
+        (estado.registros.length ? 'Nenhum registro encontrado com esses filtros.' : 'Nenhuma entrada registrada ainda.') + '</td></tr>';
+      return;
+    }
+    $('corpo').innerHTML = lista.map(function (r) {
+      var noLocal = r.status === 'No local';
+      var mini = r.miniatura
+        ? '<img class="mini" alt="" loading="lazy" src="' + esc(r.miniatura) + '">'
+        : '<div class="mini vazia">' + esc(iniciais(r.nome).toUpperCase()) + '</div>';
+      return '<tr>' +
+        '<td>' + mini + '</td>' +
+        '<td><div class="nome">' + esc(r.nome) + '</div><div class="sub">' + esc(r.servico || '—') + '</div></td>' +
+        '<td><div class="mono">' + esc(r.documento) + '</div><div class="sub">' + esc(r.tipoDoc) + '</div></td>' +
+        '<td>' + esc(r.empresa) + '</td>' +
+        '<td>' + esc(r.unidade) + '</td>' +
+        '<td>' + dataHora(r.entradaTxt) + '</td>' +
+        '<td>' + dataHora(r.saidaTxt) + '</td>' +
+        '<td><span class="pilula ' + (noLocal ? 'no-local' : 'saiu') + '">' + esc(r.status || '—') + '</span></td>' +
+        '<td><div class="acoes">' +
+          (noLocal ? '<button class="btn btn-pri btn-peq" data-saida="' + esc(r.id) + '">Saída</button>' : '') +
+          '<button class="btn btn-peq" data-ver="' + esc(r.id) + '">Ver</button>' +
+        '</div></td>' +
+      '</tr>';
+    }).join('');
+  }
+  function dataHora(txt) {
+    if (!txt) return '<span class="sub">—</span>';
+    var p = String(txt).split(' ');
+    return '<div class="mono">' + esc(p[0]) + '</div><div class="sub mono">' + esc(p.slice(1).join(' ')) + '</div>';
+  }
+  function porId(id) { for (var i = 0; i < estado.registros.length; i++) if (estado.registros[i].id === id) return estado.registros[i]; return null; }
+
+  $('corpo').addEventListener('click', function (ev) {
+    var b = ev.target.closest('button');
+    if (!b) return;
+    if (b.dataset.ver) abrirDetalhe(b.dataset.ver);
+    if (b.dataset.saida) darSaida(b.dataset.saida, b);
+  });
+
+  function darSaida(id, btn) {
+    var r = porId(id);
+    if (!r) return;
+    if (!confirm('Registrar a saída de ' + r.nome + '?')) return;
+    if (btn) { btn.disabled = true; btn.textContent = '…'; }
+    return chamar('registrarSaida', estado.pin, id).then(function (res) {
+      r.status = 'Saiu'; r.saidaTxt = res.saidaTxt;
+      aviso('avisoLista', 'ok', '✔ Saída de ' + esc(r.nome) + ' registrada em <b>' + esc(res.saidaTxt) + '</b>.');
+      fecharDetalhe();
+      carregar();
+    }).catch(function (e) {
+      if (!tratarErroPin(e)) aviso('avisoLista', 'erro', esc(msgErro(e)));
+      if (btn) { btn.disabled = false; btn.textContent = 'Saída'; }
+    });
+  }
+
+  /* ---------- Detalhe ---------- */
+  function abrirDetalhe(id) {
+    var r = porId(id);
+    if (!r) return;
+    var noLocal = r.status === 'No local';
+    var foto = r.miniatura
+      ? '<img class="modal-foto" alt="Foto de ' + esc(r.nome) + '" src="' + esc(r.miniatura) + '">'
+      : '<div class="modal-foto vazia">Sem foto</div>';
+    var campos = [
+      ['Documento', esc(r.tipoDoc) + ' <span class="mono">' + esc(r.documento) + '</span>'],
+      ['Empresa', esc(r.empresa)],
+      ['Unidade', esc(r.unidade)],
+      ['Serviço', esc(r.servico || '—')],
+      ['Entrada', '<span class="mono">' + esc(r.entradaTxt) + '</span>'],
+      ['Saída', '<span class="mono">' + esc(r.saidaTxt || '—') + '</span>'],
+      ['Status', '<span class="pilula ' + (noLocal ? 'no-local' : 'saiu') + '">' + esc(r.status) + '</span>'],
+      ['Obs.', esc(r.observacoes || '—')],
+      ['ID', '<span class="mono">' + esc(r.id) + '</span>']
+    ];
+    $('detalheCorpo').innerHTML = '<div>' + foto + '</div><div><p class="rotulo-sec">Prestador</p><h3 id="dNome">' + esc(r.nome) + '</h3><dl>' +
+      campos.map(function (c) { return '<dt>' + c[0] + '</dt><dd>' + c[1] + '</dd>'; }).join('') + '</dl></div>';
+    $('detalheRodape').innerHTML =
+      (r.fotoUrl ? '<a class="btn" href="' + esc(r.fotoUrl) + '" target="_blank" rel="noopener">Abrir foto</a>' : '') +
+      (noLocal ? '<button class="btn btn-pri" type="button" id="dSaida">Registrar saída</button>' : '') +
+      '<button class="btn" type="button" id="dFechar">Fechar</button>';
+    estado.detalheId = r.id;
+    $('veuDetalhe').classList.add('aberto');
+    $('dFechar').addEventListener('click', fecharDetalhe);
+    if (noLocal) $('dSaida').addEventListener('click', function () { darSaida(r.id, this); });
+    $('dFechar').focus();
+    if (r.fotoUrl) {
+      chamar('obterFoto', estado.pin, r.id).then(function (dataUrl) {
+        var img = document.querySelector('#detalheCorpo .modal-foto');
+        if (!dataUrl || estado.detalheId !== r.id || !$('veuDetalhe').classList.contains('aberto')) return;
+        if (img && img.tagName === 'IMG') img.src = dataUrl;
+        else if (img) img.outerHTML = '<img class="modal-foto" alt="Foto de ' + esc(r.nome) + '" src="' + dataUrl + '">';
+      }).catch(function () {});
+    }
+  }
+  function fecharDetalhe() { $('veuDetalhe').classList.remove('aberto'); }
+  $('veuDetalhe').addEventListener('click', function (ev) { if (ev.target === this) fecharDetalhe(); });
+  document.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') fecharDetalhe(); });
+
+  /* ---------- Filtros / atualização ---------- */
+  $('busca').addEventListener('input', desenhar);
+  $('fStatus').addEventListener('change', desenhar);
+  $('fData').addEventListener('change', carregar);
+  $('btnAtualizar').addEventListener('click', carregar);
+  $('btnLimpar').addEventListener('click', function () {
+    $('busca').value = ''; $('fStatus').value = '';
+    var tinhaData = !!$('fData').value; $('fData').value = '';
+    if (tinhaData) carregar(); else desenhar();
+  });
+  function pararTimer() { if (estado.timer) clearInterval(estado.timer); estado.timer = null; }
+  function iniciar() {
+    pararTimer();
+    carregar();
+    estado.timer = setInterval(function () { if (!document.hidden) carregar(); }, 60000);
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && estado.timer) carregar(); });
+
+  /* ---------- Início ---------- */
+  ajustarTipoDoc();
+  chamar('verificarPin', estado.pin).then(function (r) {
+    $('btnSairPin').hidden = !r.exigePin;
+    if (r.ok) iniciar();
+    else { salvarPin(''); pedirPin(estado.pin ? 'PIN salvo não confere. Digite novamente.' : ''); }
+  }).catch(function (e) {
+    aviso('avisoLista', 'erro', 'Não foi possível conectar ao servidor: ' + esc(msgErro(e)));
+  });
+})();
+</script>
+</body>
+</html>
