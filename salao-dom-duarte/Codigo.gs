@@ -34,10 +34,10 @@ const CONFIG = {
   ANTECEDENCIA_MAX_DIAS: 180,
 
   // ID do PDF do regulamento no Google Drive (deixe '' para não anexar)
-  REGULAMENTO_PDF_ID: '',
+  REGULAMENTO_PDF_ID: '18D4ItNcweEIICbls556NxuPqk4g3AFeK',
 
   // Endereço público do app (terminado em /exec). Preenchido após a 1ª publicação.
-  URL_APP: '',
+  URL_APP: 'https://script.google.com/macros/s/AKfycbxa4KGiitIVf-iGLpx0Ix2qKeIcLLsn45UVx-A_lbZ0onYjwlq12_zuhbNb58pPwspe/exec',
 
   FUSO: 'America/Sao_Paulo',
 };
@@ -585,6 +585,11 @@ function lembretes_(dataISO) {
     '. Os horários incluem montagem e desmontagem.</li>' +
     '<li>Domingo a quinta: som reduzido às 21h e encerramento às 22h. Sexta e sábado: som reduzido às 22h e encerramento à 00h.</li>' +
     '<li>Apenas uma reserva por dia.</li>' +
+    '<li>Proibidos: mesa de som, karaokê, instrumentos musicais/banda, fogos, churrasqueiras portáteis e materiais inflamáveis.</li>' +
+    '<li>Mesas e cadeiras somente dentro da área com pintura cinza no chão.</li>' +
+    '<li>Convidados não podem usar o estacionamento do condomínio.</li>' +
+    '<li>Entregar o salão limpo, com o lixo recolhido, até 1 hora após o encerramento.</li>' +
+    '<li>Cancelamento: pedir com no mínimo 48 horas de antecedência; depois disso não há reembolso, salvo força maior comprovada.</li>' +
     '<li>O morador responsável aceitou o regulamento oficial do salão, aprovado em assembleia em 11/12/2025.</li>' +
     '</ul>';
 }
