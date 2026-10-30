@@ -56,7 +56,8 @@ const html = fs.readFileSync(path.join(raiz, 'Index.html'), 'utf8')
   await page.click('#prox');
   await page.click('.cal button[data-d="2026-11-14"]');
   await page.fill('#nome', 'Maria da Silva Teste');
-  await page.fill('#unidade', '302');
+  await page.fill('#apto', '302');
+  await page.fill('#bloco', '1');
   await page.fill('#telefone', '(21) 99999-0000');
   await page.fill('#email', 'maria.da.silva.teste.com.email.comprido@exemplo.com.br');
   await page.check('#aceite');

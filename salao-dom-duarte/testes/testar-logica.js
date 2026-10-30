@@ -90,7 +90,7 @@ teste('Valor = 10% do salário mínimo (BCB) e cai para a referência se falhar'
   respostaBCB = { code: 200, body: '[{"data":"01/01/2026","valor":"1621.00"}]' };
 });
 
-const base = { nome: 'Maria Teste', unidade: '302', telefone: '(21) 99999-0000', email: 'maria@exemplo.com', aceite: true };
+const base = { nome: 'Maria Teste', apto: '302', bloco: '1', telefone: '(21) 99999-0000', email: 'maria@exemplo.com', aceite: true };
 const erroDe = (dados) => { try { g('validarPedido_')(dados); return null; } catch (e) { return e.message; } };
 
 teste('Antecedência mínima de 5 dias e máxima de 180', () => {
@@ -116,6 +116,13 @@ teste('Horários: dom-qui até 22h; sex e sáb até 00h', () => {
   assert.match(g('textoHorario_')('2026-11-14'), /08h às 00h/); // sábado
 });
 
+teste('Apto e Bloco são obrigatórios e aparecem juntos', () => {
+  assert.match(erroDe({ ...base, apto: '', data: '2026-11-10' }), /apartamento/);
+  assert.match(erroDe({ ...base, bloco: '', data: '2026-11-10' }), /bloco/);
+  assert.strictEqual(g('validarPedido_')({ ...base, data: '2026-11-10' }).unidade, 'Apto 302 - Bloco 1');
+  assert.strictEqual(g('validarPedido_')({ ...base, apto: 'Apto 302', bloco: 'bloco 2', data: '2026-11-10' }).unidade, 'Apto 302 - Bloco 2');
+});
+
 let r1;
 teste('Fluxo: pré-reserva amarela + e-mail ao morador e à administração', () => {
   r1 = g('solicitarReserva')({ ...base, data: '2026-11-13' }); // sexta
@@ -123,7 +130,8 @@ teste('Fluxo: pré-reserva amarela + e-mail ao morador e à administração', ()
   assert.strictEqual(ev.cor, '5');
   assert.strictEqual(ev.ini.toISOString(), '2026-11-13T11:00:00.000Z'); // 08h SP
   assert.strictEqual(ev.fim.toISOString(), '2026-11-14T03:00:00.000Z'); // 00h SP
-  assert.match(ev.titulo, /PRÉ-RESERVA/);
+  assert.match(ev.titulo, /PRÉ-RESERVA — Salão — Apto 302 - Bloco 1/);
+  assert.ok(emails[0].htmlBody.includes('Apto 302 - Bloco 1'));
   assert.strictEqual(emails.length, 2);
   assert.strictEqual(emails[0].to, 'maria@exemplo.com');
   assert.ok(emails[0].htmlBody.includes(r1.pix));

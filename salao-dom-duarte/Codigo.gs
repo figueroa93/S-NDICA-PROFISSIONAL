@@ -321,7 +321,7 @@ function criarEvento_(r) {
     'Protocolo: ' + r.protocolo,
     'Status: ' + STATUS.PRE + ' (aguardando pagamento)',
     'Morador: ' + r.nome,
-    'Unidade: ' + r.unidade,
+    'Apto / Bloco: ' + r.unidade,
     'Telefone: ' + r.telefone,
     'E-mail: ' + r.email,
     'Valor: ' + moeda_(r.valor),
@@ -381,7 +381,8 @@ function validarPedido_(f) {
   const limpar = (v, max) => String(v || '').replace(/\s+/g, ' ').trim().slice(0, max);
   const d = {
     nome: limpar(f.nome, 80),
-    unidade: limpar(f.unidade, 30),
+    apto: limpar(f.apto, 15).replace(/^(apartamento|apto|ap)\.?\s*/i, ''),
+    bloco: limpar(f.bloco, 15).replace(/^(bloco|bl)\.?\s*/i, ''),
     telefone: limpar(f.telefone, 30),
     email: limpar(f.email, 120).toLowerCase(),
     data: limpar(f.data, 10),
@@ -389,7 +390,9 @@ function validarPedido_(f) {
   };
 
   if (d.nome.length < 3) throw new Error('Informe seu nome completo.');
-  if (!d.unidade) throw new Error('Informe o número do seu apartamento.');
+  if (!d.apto) throw new Error('Informe o número do seu apartamento.');
+  if (!d.bloco) throw new Error('Informe o seu bloco.');
+  d.unidade = 'Apto ' + d.apto + ' - Bloco ' + d.bloco;
   if (d.telefone.replace(/\D/g, '').length < 10) throw new Error('Informe um telefone com DDD.');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) throw new Error('Informe um e-mail válido.');
   if (f.aceite !== true && f.aceite !== 'true' && f.aceite !== 'on') {
@@ -570,7 +573,7 @@ function quadroReserva_(r) {
     linha('Data', esc_(dataPorExtenso_(r.data))) +
     linha('Horário', esc_(textoHorario_(r.data))) +
     linha('Morador', esc_(r.nome)) +
-    linha('Unidade', esc_(r.unidade)) +
+    linha('Apto / Bloco', esc_(r.unidade)) +
     linha('Telefone', esc_(r.telefone)) +
     linha('E-mail', esc_(r.email)) +
     linha('Valor', moeda_(r.valor)) +

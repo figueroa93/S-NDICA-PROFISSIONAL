@@ -85,6 +85,7 @@
       font-family: inherit; background: #fff; color: var(--texto);
     }
     textarea { min-height: 80px; resize: vertical; }
+    .lado-a-lado { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .isca { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
     .regulamento { max-height: 340px; overflow-y: auto; border: 1px solid var(--borda); border-radius: 8px;
                    padding: 4px 14px; font-size: 14px; background: #fafafa; }
@@ -203,8 +204,16 @@
           <h2><span class="num">2</span>Seus dados</h2>
           <label for="nome">Nome completo</label>
           <input type="text" id="nome" name="nome" autocomplete="name" maxlength="80" required>
-          <label for="unidade">Apartamento</label>
-          <input type="text" id="unidade" name="unidade" maxlength="30" placeholder="Ex.: 302" required>
+          <div class="lado-a-lado">
+            <div>
+              <label for="apto">Apto</label>
+              <input type="text" id="apto" name="apto" maxlength="10" placeholder="Ex.: 302" required>
+            </div>
+            <div>
+              <label for="bloco">Bloco</label>
+              <input type="text" id="bloco" name="bloco" maxlength="10" placeholder="Ex.: 1" required>
+            </div>
+          </div>
           <label for="telefone">Telefone / WhatsApp</label>
           <input type="tel" id="telefone" name="telefone" autocomplete="tel" maxlength="30" placeholder="(21) 99999-9999" required>
           <label for="email">E-mail</label>
@@ -362,14 +371,15 @@
         ev.preventDefault();
         var f = ev.target;
         var dados = {
-          nome: f.nome.value, unidade: f.unidade.value, telefone: f.telefone.value,
+          nome: f.nome.value, apto: f.apto.value, bloco: f.bloco.value, telefone: f.telefone.value,
           email: f.email.value, observacoes: f.observacoes.value, site: f.site.value,
           aceite: f.aceite.checked, data: escolhida
         };
         if (!info) return mostrarErro('Aguarde as datas carregarem.');
         if (!escolhida) return mostrarErro('Escolha uma data no calendário (passo 1).');
         if (dados.nome.trim().length < 3) return mostrarErro('Informe seu nome completo.');
-        if (!dados.unidade.trim()) return mostrarErro('Informe o número do seu apartamento.');
+        if (!dados.apto.trim()) return mostrarErro('Informe o número do seu apartamento.');
+        if (!dados.bloco.trim()) return mostrarErro('Informe o seu bloco.');
         if (dados.telefone.replace(/\D/g, '').length < 10) return mostrarErro('Informe um telefone com DDD.');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email.trim())) return mostrarErro('Informe um e-mail válido.');
         if (!dados.aceite) return mostrarErro('Marque que leu e concorda com o regulamento.');
