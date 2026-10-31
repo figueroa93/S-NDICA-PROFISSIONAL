@@ -3,8 +3,10 @@
  * Servidor do aplicativo web (Google Apps Script vinculado à planilha).
  */
 
-// PIN exigido pelo aplicativo. '' = sem PIN.
-const PIN = '';
+// PIN exigido pelo aplicativo. Fica na propriedade do script "PIN" (Configurações do projeto →
+// Propriedades do script), fora do código, porque o repositório é público.
+// Valor "" (vazio) = sem PIN. Propriedade ausente = app bloqueado até ser configurada.
+const PIN = PropertiesService.getScriptProperties().getProperty('PIN');
 
 const PLANILHA_ID = '1o1gCe6_qwFHPogIimGcwJHhzkP_Zhy4FgBOCYitv7_g';
 const ABA = 'Movimentos';
@@ -327,6 +329,9 @@ function estado_(sh, linhas) {
 // ---------------------------------------------------------------- Validação e formato
 
 function validarPin_(pin) {
+  if (PIN === null) {
+    throw new Error('PIN não configurado. Crie a propriedade do script "PIN" no editor do Apps Script.');
+  }
   if (PIN && String(pin == null ? '' : pin).trim() !== String(PIN)) {
     throw new Error('PIN incorreto.');
   }

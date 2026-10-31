@@ -32,11 +32,11 @@ function criarAmbiente(pin) {
     SpreadsheetApp: { openById: () => ss, flush() {} },
     LockService: { getScriptLock: () => ({ tryLock() { assert(!travado); travado = true; return true; }, releaseLock() { travado = false; } }) },
     Utilities: { formatDate: (d, tz, f) => d.toLocaleString('pt-BR', { timeZone: tz, hour: '2-digit', minute: '2-digit', ...(f.includes('yyyy') ? { day: '2-digit', month: '2-digit', year: 'numeric' } : {}) }).replace(',', '') },
-    HtmlService: {}, console
+    HtmlService: {}, console,
+    PropertiesService: { getScriptProperties: () => ({ getProperty: k => (k === 'PIN' ? pin : null) }) }
   };
   vm.createContext(ctx);
   let src = fs.readFileSync(path.join(__dirname, '..', 'Codigo.gs'), 'utf8');
-  src = src.replace(/const PIN = '[^']*';/, `const PIN = ${JSON.stringify(pin)};`);
   vm.runInContext(src + '\n;this.api={carregar,registrarEntrada,registrarSaida,preparar};', ctx);
   return { api: ctx.api, dados, formatos, ctx };
 }
@@ -145,5 +145,8 @@ assert.strictEqual(dados[dados.length - 1][7][0], "'");
 // Sem PIN
 const semPin = criarAmbiente('');
 assert.doesNotThrow(() => semPin.api.carregar());
-console.log('ok  sem PIN aceita qualquer chamada');
+console.log('ok  PIN vazio aceita qualquer chamada');
+const naoConfig = criarAmbiente(null);
+assert.throws(() => naoConfig.api.carregar('4321'), /PIN não configurado/);
+console.log('ok  PIN ausente bloqueia o app');
 console.log('\nTodos os testes passaram.');

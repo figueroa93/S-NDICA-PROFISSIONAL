@@ -38,7 +38,9 @@ Pré-requisitos: Node.js e `npm i -g @google/clasp`.
    ```
    Se o `create` sobrescrever o `appsscript.json`, recupere a versão deste repositório antes do push.
 4. `clasp push -f`
-5. Abra o editor (`clasp open-script`), escolha a função **preparar** e clique em **Executar**.
+5. Abra o editor (`clasp open-script`). Em **Configurações do projeto (⚙) → Propriedades do script**,
+   adicione a propriedade `PIN` com o PIN da portaria. Depois, no editor, escolha a função **preparar**
+   e clique em **Executar**.
    Autorize o acesso à planilha quando o Google pedir. Esse passo é obrigatório uma vez.
 6. `clasp deploy -d "Portaria Dom Duarte"`. Guarde o **deploymentId** que aparecer.
    A URL do app é `https://script.google.com/macros/s/<deploymentId>/exec`.
@@ -60,10 +62,13 @@ Para ver os deploymentIds: `clasp deployments`.
 
 ## Trocar o PIN
 
-1. Em `Codigo.gs`, altere a linha do topo: `const PIN = '1234';` (use `''` para não exigir PIN).
-2. Rode `clasp push -f` e depois `clasp deploy -i <deploymentId>`. Também dá para editar direto no editor
-   do Apps Script e usar *Implantar → Gerenciar implantações → editar → Nova versão*.
-3. No celular da portaria, o app vai mostrar a tela de PIN. Digite o novo PIN uma vez; ele fica salvo no aparelho.
+O PIN **não fica no código**, porque este repositório é público. Ele fica guardado no projeto Apps Script:
+
+1. Abra o editor do Apps Script (`clasp open-script`, ou pela planilha em *Extensões → Apps Script*).
+2. Vá em **Configurações do projeto (⚙) → Propriedades do script** e edite o valor de `PIN`.
+   Deixe o valor vazio para não exigir PIN. Se você apagar a propriedade, o app fica bloqueado.
+3. Salve. A troca vale na hora, sem precisar publicar de novo.
+4. No celular da portaria, o app vai mostrar a tela de PIN. Digite o novo PIN uma vez; ele fica salvo no aparelho.
 
 ## Dicas
 
