@@ -5,7 +5,9 @@ Ele roda 100% no Google (Apps Script + Planilha Google), sem servidor próprio e
 
 - **Conta dona:** domduartecondominio@gmail.com
 - **Planilha:** `1o1gCe6_qwFHPogIimGcwJHhzkP_Zhy4FgBOCYitv7_g`, aba **Movimentos**
-- **Link do app:** a URL `/exec` da implantação (veja abaixo). No celular, abra no Chrome e use
+- **Script (vinculado à planilha):** `1zkQ7HjSVSPzfrKcP8-yn4TWvzKjSW1nMdu_qcmeHrG9Ef0b82_dR336Q`
+- **deploymentId:** `AKfycby482MjwrMZPOi1pO4AJp_AHerg8p5hj-oj5CCfiWG8xAwRsoGT_8_FkL5cbYDJmW0gwQ`
+- **Link do app:** https://script.google.com/macros/s/AKfycby482MjwrMZPOi1pO4AJp_AHerg8p5hj-oj5CCfiWG8xAwRsoGT_8_FkL5cbYDJmW0gwQ/exec No celular, abra no Chrome e use
   *⋮ → Adicionar à tela inicial*. No iPhone, abra no Safari e use *Compartilhar → Adicionar à Tela de Início*.
 
 ## Arquivos
@@ -32,11 +34,8 @@ Pré-requisitos: Node.js e `npm i -g @google/clasp`.
 
 1. Ative a API do Apps Script em https://script.google.com/home/usersettings (logado na conta do condomínio).
 2. `clasp login` (entre com domduartecondominio@gmail.com).
-3. Nesta pasta, se ainda não houver `.clasp.json`:
-   ```bash
-   clasp create --type sheets --title "Portaria Dom Duarte" --parentId 1o1gCe6_qwFHPogIimGcwJHhzkP_Zhy4FgBOCYitv7_g --rootDir .
-   ```
-   Se o `create` sobrescrever o `appsscript.json`, recupere a versão deste repositório antes do push.
+3. O `.clasp.json` desta pasta já aponta para o script vinculado à planilha. Não rode `clasp create`:
+   o clasp 3 ignora `--parentId` e cria uma planilha nova.
 4. `clasp push -f`
 5. Abra o editor (`clasp open-script`). Em **Configurações do projeto (⚙) → Propriedades do script**,
    adicione a propriedade `PIN` com o PIN da portaria. Depois, no editor, escolha a função **preparar**
@@ -54,7 +53,7 @@ clasp push -f
 ```
 
 ```bash
-clasp deploy -i <deploymentId> -d "descrição da mudança"
+clasp deploy -i AKfycby482MjwrMZPOi1pO4AJp_AHerg8p5hj-oj5CCfiWG8xAwRsoGT_8_FkL5cbYDJmW0gwQ -d "descrição da mudança"
 ```
 
 Use **sempre** `-i <deploymentId>`. Sem ele, o clasp cria uma implantação nova com outro link.
