@@ -17,6 +17,7 @@ function criarAmbiente(pin) {
       return out;
     },
     setNumberFormat(f) { formatos[r + ':' + c] = f; return this; },
+    setFormulas(v) { return this.setValues(v); },
     setBackground() { return this; }, setFontColor() { return this; }, setFontWeight() { return this; }
   });
   let existe = false;
@@ -26,10 +27,10 @@ function criarAmbiente(pin) {
     getMaxRows: () => 1000, getMaxColumns: () => 26,
     setFrozenRows() {}, insertColumnsAfter() {}
   };
-  const ss = { getSheetByName: n => (existe && n === 'Movimentos' ? sheet : null), insertSheet: () => { existe = true; return sheet; } };
+  const ss = { setRecalculationInterval() {}, getSheetByName: n => (existe && n === 'Movimentos' ? sheet : null), insertSheet: () => { existe = true; return sheet; } };
   let travado = false;
   const ctx = {
-    SpreadsheetApp: { openById: () => ss, flush() {} },
+    SpreadsheetApp: { openById: () => ss, flush() {}, RecalculationInterval: { ON_CHANGE_AND_MINUTE: 'x' } },
     LockService: { getScriptLock: () => ({ tryLock() { assert(!travado); travado = true; return true; }, releaseLock() { travado = false; } }) },
     Utilities: { formatDate: (d, tz, f) => d.toLocaleString('pt-BR', { timeZone: tz, hour: '2-digit', minute: '2-digit', ...(f.includes('yyyy') ? { day: '2-digit', month: '2-digit', year: 'numeric' } : {}) }).replace(',', '') },
     HtmlService: {}, console,
@@ -60,7 +61,8 @@ const semDatas = obj => JSON.stringify(obj, (k, v) => { assert(!ehData(v) && !(t
 const { api, dados, formatos, ctx } = criarAmbiente('4321');
 api.carregar('4321');
 assert.strictEqual(dados[0][0], 'ID');
-assert.strictEqual(dados[0].length, 16);
+assert.strictEqual(dados[0].length, 17);
+assert.strictEqual(dados[0][16], 'Tempo de permanência');
 
 // Validações
 assert.throws(() => api.registrarEntrada('4321', { placa: 'AB1234', porteiro: 'João' }), /Placa inválida/);
@@ -137,6 +139,33 @@ assert.strictEqual(e.historico.length, 4);
 igual(e.porteiros, ['João', 'Maria']);
 assert.strictEqual(e.veiculos.RIO2A18.modelo, 'Onix prata');
 semDatas(e);
+
+// Coluna Q: fórmula do tempo de permanência em cada linha
+assert.strictEqual(dados[1][16], '=IF(G2="","",IF(J2="",NOW(),J2)-G2)');
+assert.strictEqual(formatos['2:17'], '[h]:mm');
+console.log('ok  coluna Q com fórmula de permanência:', dados[1][16]);
+
+// Unidade já ocupada é sinalizada (sem bloquear)
+r = api.registrarEntrada('4321', { placa: 'UUU1A11', porteiro: 'João', destino: 'Bloco B 302' });
+assert(r.ok && !r.aviso);
+r = api.registrarEntrada('4321', { placa: 'VVV2B22', porteiro: 'João', destino: 'bloco b-302' });
+assert(r.ok && r.aviso && /UUU1A11/.test(r.mensagem), r.mensagem);
+igual(r.estado.unidades, ['Bloco B 302']);
+console.log('ok  unidade ocupada sinalizada:', r.mensagem);
+api.registrarSaida('4321', { placa: 'UUU1A11', porteiro: 'João' });
+api.registrarSaida('4321', { placa: 'VVV2B22', porteiro: 'João' });
+
+// Planilha antiga (16 colunas) é atualizada sozinha: cabeçalho e fórmulas
+{
+  const amb = criarAmbiente('4321');
+  amb.api.preparar();
+  amb.dados[0].length = 16;
+  amb.dados.push([1, 'OLD1234', 'Visitante', '', '', '', vm.runInContext('new Date()', amb.ctx), 'João', '', '', '', '', '', 'No pátio', '', '']);
+  amb.api.carregar('4321');
+  assert.strictEqual(amb.dados[0][16], 'Tempo de permanência');
+  assert.strictEqual(amb.dados[1][16], '=IF(G2="","",IF(J2="",NOW(),J2)-G2)');
+  console.log('ok  planilha antiga recebe a coluna Q automaticamente');
+}
 
 // Proteção contra fórmula
 api.registrarEntrada('4321', { placa: 'FFF1F11', porteiro: '=HYPERLINK("x")' });

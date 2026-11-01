@@ -149,6 +149,19 @@
   .info-placa.invalida .marca { background: var(--erro); }
   .info-placa b { font-weight: 700; }
 
+  .bloco-unidade { margin-top: 12px; }
+  .bloco-unidade .campo { font: 600 20px 'Barlow Condensed', 'Barlow', sans-serif; letter-spacing: .5px; }
+  .info-unidade {
+    display: none; margin-top: 8px; padding: 9px 12px; border-radius: 10px; font-size: 14.5px;
+    background: rgba(179, 38, 30, .1); border-left: 5px solid var(--erro); color: var(--texto);
+  }
+  .info-unidade.ver { display: block; }
+  .info-unidade b { color: var(--erro); }
+  .unidade {
+    display: inline-block; font: 700 16px/1 'Barlow Condensed', sans-serif; letter-spacing: .5px;
+    background: var(--azul); color: var(--dourado-claro); border-radius: 6px; padding: 4px 8px 3px;
+    vertical-align: 3px; margin-left: 4px;
+  }
   .acoes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
   .botao {
     border: 0; border-radius: 12px; min-height: 72px; cursor: pointer;
@@ -212,6 +225,7 @@
   .etiqueta.concluido { background: rgba(29, 122, 74, .14); color: var(--ok); }
   .etiqueta.sem { background: rgba(179, 38, 30, .13); color: var(--erro); }
   .etiqueta.outro { background: var(--azul); color: var(--dourado-claro); }
+  .etiqueta.lotada { background: var(--erro); color: #fff; }
   .linha-hora { display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; font-size: 13.5px; color: var(--cinza); margin-top: 4px; }
   .linha-hora .mono { color: var(--texto); font-size: 13px; }
 
@@ -297,6 +311,13 @@
     </div>
     <div class="info-placa" id="infoPlaca"><span class="marca"></span><span>Digite a placa para ver a situação.</span></div>
 
+    <div class="bloco-unidade">
+      <label for="destino">Unidade de destino</label>
+      <input class="campo" id="destino" list="unidades" maxlength="60" autocomplete="off" autocapitalize="characters" placeholder="Ex.: Bloco B 302">
+      <datalist id="unidades"></datalist>
+      <div class="info-unidade" id="infoUnidade" role="status"></div>
+    </div>
+
     <div class="acoes">
       <button class="botao entrada" id="btEntrada" type="button">Entrada<small>registrar chegada</small></button>
       <button class="botao saida" id="btSaida" type="button">Saída<small>registrar partida</small></button>
@@ -314,10 +335,7 @@
             </select>
           </div>
         </div>
-        <div class="duas">
-          <div><label for="motorista">Motorista</label><input class="campo" id="motorista" maxlength="60" autocapitalize="words"></div>
-          <div><label for="destino">Destino</label><input class="campo" id="destino" maxlength="60" placeholder="Ex.: Bloco B 302"></div>
-        </div>
+        <div><label for="motorista">Motorista</label><input class="campo" id="motorista" maxlength="60" autocapitalize="words"></div>
         <div><label for="obs">Observação</label><textarea class="campo" id="obs" maxlength="200"></textarea></div>
       </div>
     </details>
@@ -345,7 +363,7 @@
       <button type="button" data-dias="7">7 dias</button>
       <button type="button" data-dias="30">30 dias</button>
     </div>
-    <input class="campo" id="busca" type="search" placeholder="Buscar placa, nome, destino…" autocomplete="off">
+    <input class="campo" id="busca" type="search" placeholder="Buscar placa, unidade, nome…" autocomplete="off">
     <div class="lista" id="listaHist" style="margin-top:6px"></div>
     <div class="rodape-hist"><span id="contHist"></span><a class="planilha" id="linkPlanilha" href="#" target="_blank" rel="noopener">Abrir planilha ↗</a></div>
   </section>
@@ -386,7 +404,7 @@
     porteiro: $('porteiro'), posto: $('posto'), placa: $('placa'), info: $('infoPlaca'),
     btEntrada: $('btEntrada'), btSaida: $('btSaida'), extra: $('extra'),
     modelo: $('modelo'), motorista: $('motorista'), destino: $('destino'), tipo: $('tipo'), obs: $('obs'),
-    listaPatio: $('listaPatio'), listaHist: $('listaHist'), busca: $('busca'), toast: $('toast'),
+    infoUnidade: $('infoUnidade'), listaPatio: $('listaPatio'), listaHist: $('listaHist'), busca: $('busca'), toast: $('toast'),
     telaPin: $('telaPin'), pin: $('pin'), pinErro: $('pinErro'), sinc: $('sinc'), relogio: $('relogio')
   };
 
@@ -429,6 +447,12 @@
   }
   function normPlaca(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
   function mesmaPessoa(a, b) { return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase(); }
+  function chaveUnidade(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+  function noPatioNaUnidade(destino, excetoPlaca) {
+    var k = chaveUnidade(destino);
+    if (!k || !est) return [];
+    return est.patio.filter(function (m) { return chaveUnidade(m.destino) === k && m.placa !== excetoPlaca; });
+  }
   function momento(m) { return Math.max(m.entrada || 0, m.saida || 0); }
 
   function abertaDaPlaca(placa) {
@@ -516,6 +540,7 @@
     $('linkPlanilha').href = estado.planilhaUrl;
     var dl = $('porteiros');
     dl.innerHTML = estado.porteiros.map(function (p) { return '<option value="' + esc(p) + '">'; }).join('');
+    $('unidades').innerHTML = (estado.unidades || []).map(function (u) { return '<option value="' + esc(u) + '">'; }).join('');
     render();
   }
 
@@ -587,8 +612,22 @@
     }
     info.className = 'info-placa ' + classe;
     info.innerHTML = '<span class="marca"></span><span>' + txt + '</span>';
+    atualizarInfoUnidade();
     pintarArmados();
   }
+
+  function atualizarInfoUnidade() {
+    var placa = normPlaca(el.placa.value);
+    var lista = noPatioNaUnidade(el.destino.value, placa);
+    el.infoUnidade.classList.toggle('ver', lista.length > 0);
+    if (!lista.length) { el.infoUnidade.innerHTML = ''; return; }
+    el.infoUnidade.innerHTML = '<b>⚠ Já há ' + (lista.length === 1 ? 'veículo' : lista.length + ' veículos') +
+      ' no pátio para esta unidade:</b> ' + lista.map(function (m) {
+        return '<span class="mono">' + esc(m.placa) + '</span>' + (m.modelo ? ' (' + esc(m.modelo) + ')' : '') +
+          ' desde <span class="mono">' + esc(quando(m.entrada)) + '</span>, entrada por ' + esc(m.porteiroEntrada);
+      }).join('; ');
+  }
+  el.destino.addEventListener('input', atualizarInfoUnidade);
 
   el.placa.addEventListener('input', function () {
     var limpo = normPlaca(el.placa.value).slice(0, 7);
@@ -642,7 +681,7 @@
       if (r.estado) aplicar(r.estado);
       if (!r.ok && r.precisaConfirmar) { armar(chaveConfirmacao, r.mensagem); return; }
       desarmar();
-      toast(r.mensagem, 'ok', 6000);
+      toast(r.mensagem, r.aviso ? 'aviso' : 'ok', r.aviso ? 9000 : 6000);
       if (depois) depois();
     }, function (e) {
       travar(false);
@@ -727,11 +766,16 @@
       el.listaPatio.innerHTML = '<div class="vazio">Nenhum veículo no pátio.</div>';
       return;
     }
+    var porUnidade = {};
+    est.patio.forEach(function (m) { var k = chaveUnidade(m.destino); if (k) porUnidade[k] = (porUnidade[k] || 0) + 1; });
     el.listaPatio.innerHTML = est.patio.map(function (m) {
-      var extras = [m.modelo, m.motorista, m.destino].filter(Boolean).map(esc).join(' · ');
+      var extras = [m.modelo, m.motorista].filter(Boolean).map(esc).join(' · ');
+      var n = porUnidade[chaveUnidade(m.destino)] || 0;
       return '<div class="item"><div class="corpo">' +
         '<span class="mini-placa">' + esc(m.placa) + '</span> ' +
-        '<span class="tempo">' + esc(duracao((agora() - m.entrada) / 60000)) + '</span>' +
+        (m.destino ? '<span class="unidade">' + esc(m.destino) + '</span>' : '') +
+        (n > 1 ? '<span class="etiqueta lotada">' + n + ' carros na unidade</span>' : '') +
+        ' <span class="tempo">' + esc(duracao((agora() - m.entrada) / 60000)) + '</span>' +
         '<div class="det">' + esc(m.tipo) + (extras ? ' · ' + extras : '') + '</div>' +
         '<div class="det">Entrou <span class="mono">' + esc(quando(m.entrada)) + '</span> por <b>' + esc(m.porteiroEntrada) + '</b>' +
         (m.postoEntrada ? ' · ' + esc(m.postoEntrada) : '') + '</div>' +
@@ -748,6 +792,7 @@
       if (momento(m) < limite) return false;
       if (!termo) return true;
       if (termoPlaca && m.placa.indexOf(termoPlaca) >= 0) return true;
+      if (termoPlaca && chaveUnidade(m.destino).indexOf(termoPlaca) >= 0) return true;
       return [m.modelo, m.motorista, m.destino, m.tipo, m.porteiroEntrada, m.porteiroSaida, m.obsEntrada, m.obsSaida, m.situacao]
         .join(' ').toLowerCase().indexOf(termo) >= 0;
     });
@@ -764,14 +809,15 @@
         : '<span class="etiqueta concluido">Concluído</span>';
       var outro = m.saida && m.entrada && m.porteiroSaida && !mesmaPessoa(m.porteiroEntrada, m.porteiroSaida)
         ? '<span class="etiqueta outro">outro porteiro</span>' : '';
-      var extras = [m.tipo, m.modelo, m.motorista, m.destino].filter(Boolean).map(esc).join(' · ');
+      var extras = [m.tipo, m.modelo, m.motorista].filter(Boolean).map(esc).join(' · ');
       var horas = '';
       if (m.entrada) horas += '<span>Entrada</span><span><span class="mono">' + esc(quando(m.entrada)) + '</span> · ' + esc(m.porteiroEntrada) + '</span>';
       if (m.saida) horas += '<span>Saída</span><span><span class="mono">' + esc(quando(m.saida)) + '</span> · ' + esc(m.porteiroSaida) + '</span>';
       var perm = m.permanencia != null ? ' <span class="tempo">' + esc(duracao(m.permanencia)) + '</span>' : '';
       var obs = [m.obsEntrada, m.obsSaida].filter(Boolean).map(esc).join(' / ');
       return '<div class="item"><div class="corpo">' +
-        '<span class="mini-placa">' + esc(m.placa) + '</span>' + perm + ' ' + etiqueta + outro +
+        '<span class="mini-placa">' + esc(m.placa) + '</span>' +
+        (m.destino ? '<span class="unidade">' + esc(m.destino) + '</span>' : '') + perm + ' ' + etiqueta + outro +
         (extras ? '<div class="det">' + extras + '</div>' : '') +
         '<div class="linha-hora">' + horas + '</div>' +
         (obs ? '<div class="det">Obs.: ' + obs + '</div>' : '') +

@@ -22,11 +22,15 @@ Ele roda 100% no Google (Apps Script + Planilha Google), sem servidor próprio e
 
 ## Regras
 
-- Uma linha por passagem de veículo (colunas A–P).
+- Uma linha por passagem de veículo (colunas A–Q).
 - Qualquer porteiro pode dar a **saída** de um veículo que entrou com outro porteiro. A saída fecha a
   entrada aberta mais recente daquela placa e calcula a permanência em minutos.
 - Sem entrada aberta, a saída é gravada como **"Saída sem entrada"** depois de um segundo toque.
 - Uma entrada duplicada (veículo que já está no pátio) também pede um segundo toque.
+- A **unidade de destino** fica em destaque logo abaixo da placa. Se já houver veículo no pátio para a mesma
+  unidade, o app avisa (sem bloquear) e marca "N carros na unidade" na lista do pátio.
+- A coluna **Q — Tempo de permanência** (horas:minutos) é uma fórmula: para veículos no pátio ela conta até agora
+  e se atualiza a cada minuto; depois da saída mostra o tempo final. A coluna M continua com os minutos.
 
 ## Publicar pela primeira vez
 

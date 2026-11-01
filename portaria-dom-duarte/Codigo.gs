@@ -17,7 +17,7 @@ const CABECALHO = [
   'ID', 'Placa', 'Tipo', 'Modelo / cor', 'Motorista', 'Destino',
   'Entrada', 'Porteiro entrada', 'Posto entrada',
   'Saída', 'Porteiro saída', 'Posto saída',
-  'Permanência (min)', 'Situação', 'Obs. entrada', 'Obs. saída'
+  'Permanência (min)', 'Situação', 'Obs. entrada', 'Obs. saída', 'Tempo de permanência'
 ];
 
 // Índices das colunas (base 0) na ordem do cabeçalho.
@@ -25,8 +25,10 @@ const C = {
   ID: 0, PLACA: 1, TIPO: 2, MODELO: 3, MOTORISTA: 4, DESTINO: 5,
   ENTRADA: 6, PORTEIRO_ENTRADA: 7, POSTO_ENTRADA: 8,
   SAIDA: 9, PORTEIRO_SAIDA: 10, POSTO_SAIDA: 11,
-  PERMANENCIA: 12, SITUACAO: 13, OBS_ENTRADA: 14, OBS_SAIDA: 15
+  PERMANENCIA: 12, SITUACAO: 13, OBS_ENTRADA: 14, OBS_SAIDA: 15, TEMPO: 16
 };
+
+const FORMATO_TEMPO = '[h]:mm';
 
 const NO_PATIO = 'No pátio';
 const CONCLUIDO = 'Concluído';
@@ -69,12 +71,14 @@ function registrarEntrada(pin, dados) {
     }
 
     const agora = new Date();
+    const destino = texto_(dados.destino, 60);
+    const naUnidade = veiculosNaUnidade_(linhas, destino);
     const linha = novaLinha_(linhas);
     linha[C.PLACA] = placa;
     linha[C.TIPO] = tipo_(dados.tipo);
     linha[C.MODELO] = texto_(dados.modelo, 60);
     linha[C.MOTORISTA] = texto_(dados.motorista, 60);
-    linha[C.DESTINO] = texto_(dados.destino, 60);
+    linha[C.DESTINO] = destino;
     linha[C.ENTRADA] = agora;
     linha[C.PORTEIRO_ENTRADA] = porteiro;
     linha[C.POSTO_ENTRADA] = texto_(dados.posto, 40);
@@ -83,11 +87,14 @@ function registrarEntrada(pin, dados) {
     acrescentar_(sh, linha);
     linhas.push(linha);
 
-    return {
-      ok: true,
-      mensagem: 'Entrada registrada: ' + placa + ' às ' + hora_(agora) + '.',
-      estado: estado_(sh, linhas)
-    };
+    let mensagem = 'Entrada registrada: ' + placa + ' às ' + hora_(agora) +
+      (destino ? ' para ' + destino : '') + '.';
+    if (naUnidade.length) {
+      mensagem += ' Atenção: a unidade já tinha ' +
+        (naUnidade.length === 1 ? 'outro veículo' : naUnidade.length + ' veículos') + ' no pátio (' +
+        naUnidade.map(function (l) { return l[C.PLACA]; }).join(', ') + ').';
+    }
+    return { ok: true, aviso: naUnidade.length > 0, mensagem: mensagem, estado: estado_(sh, linhas) };
   });
 }
 
@@ -198,12 +205,23 @@ function preparar() {
   sh.getRange(2, C.ENTRADA + 1, linhas, 1).setNumberFormat(FORMATO_DATA);
   sh.getRange(2, C.SAIDA + 1, linhas, 1).setNumberFormat(FORMATO_DATA);
   sh.getRange(2, C.PLACA + 1, linhas, 1).setNumberFormat('@');
+  sh.getRange(2, C.TEMPO + 1, linhas, 1).setNumberFormat(FORMATO_TEMPO);
+
+  // Coluna "Tempo de permanência": fórmula em cada linha já registrada.
+  const ultima = sh.getLastRow();
+  if (ultima >= 2) {
+    const formulas = [];
+    for (let r = 2; r <= ultima; r++) formulas.push([formulaTempo_(r)]);
+    sh.getRange(2, C.TEMPO + 1, formulas.length, 1).setFormulas(formulas);
+  }
+  // Atualiza o tempo dos carros no pátio a cada minuto (NOW()).
+  ss.setRecalculationInterval(SpreadsheetApp.RecalculationInterval.ON_CHANGE_AND_MINUTE);
   return 'Aba "' + ABA + '" pronta.';
 }
 
 function aba_() {
   const sh = SpreadsheetApp.openById(PLANILHA_ID).getSheetByName(ABA);
-  if (sh && sh.getRange(1, 1).getValue() === CABECALHO[0]) return sh;
+  if (sh && sh.getRange(1, CABECALHO.length).getValue() === CABECALHO[CABECALHO.length - 1]) return sh;
   preparar();
   return SpreadsheetApp.openById(PLANILHA_ID).getSheetByName(ABA);
 }
@@ -231,9 +249,27 @@ function lerLinhas_(sh) {
 function acrescentar_(sh, linha) {
   const r = sh.getLastRow() + 1;
   sh.getRange(r, C.PLACA + 1).setNumberFormat('@');
+  linha[C.TEMPO] = formulaTempo_(r);
   sh.getRange(r, 1, 1, CABECALHO.length).setValues([linha]);
   sh.getRange(r, C.ENTRADA + 1).setNumberFormat(FORMATO_DATA);
   sh.getRange(r, C.SAIDA + 1).setNumberFormat(FORMATO_DATA);
+  sh.getRange(r, C.TEMPO + 1).setNumberFormat(FORMATO_TEMPO);
+}
+
+/** Saída − entrada; enquanto o carro está no pátio, agora − entrada. */
+function formulaTempo_(r) {
+  return '=IF(G' + r + '="","",IF(J' + r + '="",NOW(),J' + r + ')-G' + r + ')';
+}
+
+/** Unidade sem espaços, pontos e hífens, para comparar "B-302" com "b 302". */
+function chaveUnidade_(destino) {
+  return String(destino || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
+function veiculosNaUnidade_(linhas, destino) {
+  const k = chaveUnidade_(destino);
+  if (!k) return [];
+  return linhas.filter(function (l) { return l[C.SITUACAO] === NO_PATIO && chaveUnidade_(l[C.DESTINO]) === k; });
 }
 
 function novaLinha_(linhas) {
@@ -273,6 +309,7 @@ function estado_(sh, linhas) {
   const historico = [];
   const veiculos = {};
   const porteiros = {};
+  const unidades = {};
 
   linhas.forEach(function (l) {
     if (!l[C.PLACA]) return;
@@ -303,6 +340,10 @@ function estado_(sh, linhas) {
     if (!v || quando >= v.quando) {
       veiculos[m.placa] = { quando: quando, tipo: m.tipo, modelo: m.modelo, motorista: m.motorista, destino: m.destino };
     }
+    if (m.destino && quando >= limite) {
+      const ku = chaveUnidade_(m.destino);
+      if (ku && !unidades[ku]) unidades[ku] = m.destino;
+    }
     if (quando >= limite) {
       [m.porteiroEntrada, m.porteiroSaida].forEach(function (p) {
         const k = p.toLowerCase();
@@ -322,6 +363,7 @@ function estado_(sh, linhas) {
     historico: historico,
     veiculos: veiculos,
     porteiros: Object.keys(porteiros).map(function (k) { return porteiros[k]; }).sort(),
+    unidades: Object.keys(unidades).map(function (k) { return unidades[k]; }).sort(),
     planilhaUrl: 'https://docs.google.com/spreadsheets/d/' + PLANILHA_ID + '/edit'
   };
 }
