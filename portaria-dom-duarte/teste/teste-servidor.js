@@ -142,8 +142,8 @@ assert.strictEqual(e.veiculos.RIO2A18.modelo, 'Onix prata');
 semDatas(e);
 
 // Coluna Q: fórmula do tempo de permanência em cada linha
-assert.strictEqual(dados[1][16], '=IF(G2="","",IF(J2="",NOW(),J2)-G2)');
-assert.strictEqual(formatos['2:17'], '[h]:mm');
+assert.strictEqual(dados[1][16], '=(J2+(J2="")*NOW()-G2)*(G2<>"")');
+assert.strictEqual(formatos['2:17'], '[h]:mm;-[h]:mm;');
 console.log('ok  coluna Q com fórmula de permanência:', dados[1][16]);
 
 // Unidade já ocupada é sinalizada (sem bloquear)
@@ -164,7 +164,7 @@ api.registrarSaida('4321', { placa: 'VVV2B22', porteiro: 'João' });
   amb.dados.push([1, 'OLD1234', 'Visitante', '', '', '', vm.runInContext('new Date()', amb.ctx), 'João', '', '', '', '', '', 'No pátio', '', '']);
   amb.api.carregar('4321');
   assert.strictEqual(amb.dados[0][16], 'Tempo de permanência');
-  assert.strictEqual(amb.dados[1][16], '=IF(G2="","",IF(J2="",NOW(),J2)-G2)');
+  assert.strictEqual(amb.dados[1][16], '=(J2+(J2="")*NOW()-G2)*(G2<>"")');
   console.log('ok  planilha antiga recebe a coluna Q automaticamente');
 }
 

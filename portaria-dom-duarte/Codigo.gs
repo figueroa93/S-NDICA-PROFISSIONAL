@@ -28,7 +28,7 @@ const C = {
   PERMANENCIA: 12, SITUACAO: 13, OBS_ENTRADA: 14, OBS_SAIDA: 15, TEMPO: 16
 };
 
-const FORMATO_TEMPO = '[h]:mm';
+const FORMATO_TEMPO = '[h]:mm;-[h]:mm;'; // zero (saída sem entrada) fica em branco
 
 const NO_PATIO = 'No pátio';
 const CONCLUIDO = 'Concluído';
@@ -251,16 +251,18 @@ function acrescentar_(sh, linha) {
   sh.getRange(r, C.PLACA + 1).setNumberFormat('@');
   linha[C.TEMPO] = '';
   sh.getRange(r, 1, 1, CABECALHO.length).setValues([linha]);
-  // setFormula usa sempre a sintaxe em inglês (vírgulas); setValues seguiria o idioma da planilha.
   sh.getRange(r, C.TEMPO + 1).setFormula(formulaTempo_(r));
   sh.getRange(r, C.ENTRADA + 1).setNumberFormat(FORMATO_DATA);
   sh.getRange(r, C.SAIDA + 1).setNumberFormat(FORMATO_DATA);
   sh.getRange(r, C.TEMPO + 1).setNumberFormat(FORMATO_TEMPO);
 }
 
-/** Saída − entrada; enquanto o carro está no pátio, agora − entrada. */
+/**
+ * Saída − entrada; enquanto o carro está no pátio, agora − entrada; vazio sem entrada.
+ * Escrita sem separadores de argumento (que mudam com o idioma da planilha: "," ou ";").
+ */
 function formulaTempo_(r) {
-  return '=IF(G' + r + '="","",IF(J' + r + '="",NOW(),J' + r + ')-G' + r + ')';
+  return '=(J' + r + '+(J' + r + '="")*NOW()-G' + r + ')*(G' + r + '<>"")';
 }
 
 /** Unidade sem espaços, pontos e hífens, para comparar "B-302" com "b 302". */
