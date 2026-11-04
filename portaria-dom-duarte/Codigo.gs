@@ -249,8 +249,10 @@ function lerLinhas_(sh) {
 function acrescentar_(sh, linha) {
   const r = sh.getLastRow() + 1;
   sh.getRange(r, C.PLACA + 1).setNumberFormat('@');
-  linha[C.TEMPO] = formulaTempo_(r);
+  linha[C.TEMPO] = '';
   sh.getRange(r, 1, 1, CABECALHO.length).setValues([linha]);
+  // setFormula usa sempre a sintaxe em inglês (vírgulas); setValues seguiria o idioma da planilha.
+  sh.getRange(r, C.TEMPO + 1).setFormula(formulaTempo_(r));
   sh.getRange(r, C.ENTRADA + 1).setNumberFormat(FORMATO_DATA);
   sh.getRange(r, C.SAIDA + 1).setNumberFormat(FORMATO_DATA);
   sh.getRange(r, C.TEMPO + 1).setNumberFormat(FORMATO_TEMPO);

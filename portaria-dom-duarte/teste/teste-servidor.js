@@ -18,6 +18,7 @@ function criarAmbiente(pin) {
     },
     setNumberFormat(f) { formatos[r + ':' + c] = f; return this; },
     setFormulas(v) { return this.setValues(v); },
+    setFormula(f) { return this.setValues([[f]]); },
     setBackground() { return this; }, setFontColor() { return this; }, setFontWeight() { return this; }
   });
   let existe = false;
