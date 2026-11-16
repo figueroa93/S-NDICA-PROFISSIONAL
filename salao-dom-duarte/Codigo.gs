@@ -133,6 +133,8 @@ function solicitarReserva(form) {
     protocolo: reserva.protocolo,
     dataExtenso: dataPorExtenso_(reserva.data),
     horario: textoHorario_(reserva.data),
+    somReduzido: HORARIOS[diaSemana_(reserva.data)].somReduzido,
+    encerramento: HORARIOS[diaSemana_(reserva.data)].encerramento,
     valor: reserva.valor,
     pix: reserva.pix,
     chave: CONFIG.PIX_CHAVE,
@@ -326,6 +328,7 @@ function criarEvento_(r) {
     'E-mail: ' + r.email,
     'Valor: ' + moeda_(r.valor),
     'Horário: ' + textoHorario_(r.data),
+    'Ciente das regras de controle do som: sim',
     r.observacoes ? 'Observações: ' + r.observacoes : '',
   ].filter(Boolean).join('\n');
 
@@ -397,6 +400,9 @@ function validarPedido_(f) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) throw new Error('Informe um e-mail válido.');
   if (f.aceite !== true && f.aceite !== 'true' && f.aceite !== 'on') {
     throw new Error('É preciso declarar que leu e concorda com o regulamento.');
+  }
+  if (f.aceiteSom !== true && f.aceiteSom !== 'true' && f.aceiteSom !== 'on') {
+    throw new Error('É preciso declarar que está ciente das regras de controle do som.');
   }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(d.data) || paraISO_(new Date(d.data + 'T12:00:00-03:00')) !== d.data) {
     throw new Error('Data inválida.');
@@ -583,12 +589,21 @@ function quadroReserva_(r) {
 
 function lembretes_(dataISO) {
   const h = HORARIOS[diaSemana_(dataISO)];
-  return '<h3 style="margin:24px 0 8px">Lembretes do regulamento</h3><ul style="padding-left:20px">' +
+  return '<div style="margin:24px 0 0;padding:14px 16px;border:2px solid #d97706;background:#fffbeb;border-radius:10px">' +
+    '<h3 style="margin:0 0 8px;color:#92400e">🔊 Controle do som</h3>' +
+    '<p style="margin:0 0 8px">No dia do seu evento (' + DIAS_SEMANA[diaSemana_(dataISO)] + '): <b>volume reduzido a partir das ' +
+    h.somReduzido + '</b> e <b>som desligado às ' + h.encerramento + '</b>, com o evento encerrado.</p>' +
+    '<ul style="padding-left:20px;margin:0">' +
+    '<li>Volume sempre moderado, apenas com aparelho de som dentro do salão.</li>' +
+    '<li><b>Não pode:</b> mesa de som, karaokê e afins, instrumentos musicais, bandas, caixas de som do lado de fora ou viradas para as áreas comuns.</li>' +
+    '<li>Com reclamações repetidas, a administração pode interromper o evento. Descumprir os horários pode gerar advertência e multa.</li>' +
+    '</ul></div>' +
+    '<h3 style="margin:24px 0 8px">Lembretes do regulamento</h3><ul style="padding-left:20px">' +
     '<li>Uso a partir das ' + h.inicio + '; som reduzido às ' + h.somReduzido + '; encerramento às ' + h.encerramento +
     '. Os horários incluem montagem e desmontagem.</li>' +
     '<li>Domingo a quinta: som reduzido às 21h e encerramento às 22h. Sexta e sábado: som reduzido às 22h e encerramento à 00h.</li>' +
     '<li>Apenas uma reserva por dia.</li>' +
-    '<li>Proibidos: mesa de som, karaokê, instrumentos musicais/banda, fogos, churrasqueiras portáteis e materiais inflamáveis.</li>' +
+    '<li>Proibidos: fogos de artifício, churrasqueiras portáteis e materiais inflamáveis.</li>' +
     '<li>Mesas e cadeiras somente dentro da área com pintura cinza no chão.</li>' +
     '<li>Convidados não podem usar o estacionamento do condomínio.</li>' +
     '<li>Entregar o salão limpo, com o lixo recolhido, até 1 hora após o encerramento.</li>' +

@@ -14,7 +14,7 @@ const mock = `<script>
       ocupadas: ['2026-11-07', '2026-11-13', '2026-11-20'],
       horarios: [0,1,2,3,4,5,6].map(function (d) { return d >= 5 ? {inicio:'08h',somReduzido:'22h',encerramento:'00h'} : {inicio:'08h',somReduzido:'21h',encerramento:'22h'}; }) }; },
     solicitarReserva: function () { return { protocolo: 'DD20261114-AB12', dataExtenso: 'sábado, 14/11/2026',
-      horario: 'das 08h às 00h (som reduzido às 22h)', valor: 162.1,
+      horario: 'das 08h às 00h (som reduzido às 22h)', somReduzido: '22h', encerramento: '00h', valor: 162.1,
       pix: '00020126360014br.gov.bcb.pix0114686812790001505204000053039865406162.105802BR5915Cond Dom Duarte6014RIO DE JANEIRO62180514DD20261114AB126304ABCD',
       chave: '68681279000150', favorecido: 'Cond Dom Duarte', banco: 'C6 Bank',
       emailAdmin: 'domduartecondominio@gmail.com', telefoneAdmin: '(21) 2454-7602' }; }
@@ -61,6 +61,7 @@ const html = fs.readFileSync(path.join(raiz, 'Index.html'), 'utf8')
   await page.fill('#telefone', '(21) 99999-0000');
   await page.fill('#email', 'maria.da.silva.teste.com.email.comprido@exemplo.com.br');
   await page.check('#aceite');
+  await page.check('#aceiteSom');
   await page.click('#enviar');
   await page.waitForSelector('#resultado', { state: 'visible' });
   await page.waitForTimeout(300);

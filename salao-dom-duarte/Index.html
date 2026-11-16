@@ -38,6 +38,28 @@
     .resumo b { display: block; font-size: 18px; color: var(--cor); }
     .resumo span { font-size: 13px; color: var(--suave); }
 
+    /* Controle do som */
+    .som-destaque { border: 3px solid #d97706; background: #fffbeb; }
+    .som-destaque h2 { color: #92400e; font-size: 21px; margin-bottom: 2px; }
+    .som-sub { margin: 0 0 14px; font-weight: 600; color: #78350f; }
+    .som-horarios { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .som-dia { background: #fff; border-radius: 10px; padding: 10px 14px; border: 1px solid #fcd34d; }
+    .som-dia > b { display: block; margin-bottom: 4px; color: #78350f; }
+    .som-linha { display: flex; justify-content: space-between; align-items: center; gap: 12px;
+                 padding: 4px 0; font-size: 15px; }
+    .som-linha strong { font-size: 22px; color: #b45309; flex: 0 0 auto; }
+    .som-bloco { border-radius: 10px; padding: 10px 14px; margin-top: 10px; }
+    .som-bloco h3 { margin: 0 0 4px; font-size: 16px; }
+    .som-bloco ul { margin: 0; padding-left: 20px; font-size: 15px; }
+    .som-bloco li { margin: 4px 0; }
+    .som-bloco.pode { background: #f0fdf4; border: 1px solid #86efac; }
+    .som-bloco.nao-pode { background: #fef2f2; border: 1px solid #fca5a5; }
+    .som-bloco.nao-pode h3 { color: #991b1b; }
+    .som-bloco.consequencia { background: #fff; border: 1px solid #fcd34d; }
+    .som-base { margin: 10px 0 0; font-size: 12px; color: var(--suave); }
+    .lembrete-som { background: #fffbeb; border: 2px solid #d97706; border-radius: 10px; padding: 12px;
+                    text-align: left; margin-top: 12px; }
+
     /* Regras principais */
     .regras h2 { margin-bottom: 4px; }
     .regras-intro { margin: 0 0 14px; font-size: 14px; color: var(--suave); }
@@ -129,6 +151,51 @@
         </div>
       </section>
 
+      <section class="som-destaque" aria-labelledby="titulo-som">
+        <h2 id="titulo-som"><span aria-hidden="true">🔊</span> Controle do som</h2>
+        <p class="som-sub">Regra mais importante do salão: respeite o sossego dos vizinhos.</p>
+
+        <div class="som-horarios">
+          <div class="som-dia">
+            <b>Domingo a quinta</b>
+            <div class="som-linha"><span>Volume reduzido a partir de</span><strong>21h</strong></div>
+            <div class="som-linha"><span>Som desligado e fim do evento</span><strong>22h</strong></div>
+          </div>
+          <div class="som-dia">
+            <b>Sexta e sábado</b>
+            <div class="som-linha"><span>Volume reduzido a partir de</span><strong>22h</strong></div>
+            <div class="som-linha"><span>Som desligado e fim do evento</span><strong>00h</strong></div>
+          </div>
+        </div>
+
+        <div class="som-bloco pode">
+          <h3>✅ Pode</h3>
+          <ul>
+            <li>Aparelho de som <b>dentro do salão</b>, sempre em <b>volume moderado</b>.</li>
+          </ul>
+        </div>
+
+        <div class="som-bloco nao-pode">
+          <h3>❌ Não pode</h3>
+          <ul>
+            <li><b>Mesa de som</b>, <b>karaokê</b> e afins.</li>
+            <li><b>Instrumentos musicais</b> de qualquer tipo e <b>bandas</b>.</li>
+            <li><b>Caixas de som do lado de fora</b> ou viradas para as áreas comuns.</li>
+            <li>Som alto em qualquer horário.</li>
+          </ul>
+        </div>
+
+        <div class="som-bloco consequencia">
+          <h3>⚠️ Se a regra não for cumprida</h3>
+          <ul>
+            <li>Com reclamações repetidas, a <b>administração pode interromper o evento</b>.</li>
+            <li>Descumprir os horários pode gerar <b>multa</b> e outras penalidades.</li>
+            <li>Primeiro vem uma <b>advertência</b>; se repetir, <b>multa de 50% até 5 vezes a cota condominial</b>.</li>
+          </ul>
+        </div>
+        <p class="som-base">Regulamento do salão, itens 3, 4, 9 e 12 — aprovado em assembleia em 11/12/2025.</p>
+      </section>
+
       <section class="regras" aria-labelledby="titulo-regras">
         <h2 id="titulo-regras">Regras principais</h2>
         <p class="regras-intro">Leia antes de reservar. O descumprimento pode gerar advertência, multa e interrupção do evento.</p>
@@ -145,16 +212,6 @@
           <ul>
             <li>Uso a partir das <b>08h</b>.</li>
             <li>Os horários <b>incluem montagem e desmontagem</b>. Não é permitido ficar no salão após o encerramento.</li>
-          </ul>
-        </div>
-
-        <div class="regra som">
-          <h3><span aria-hidden="true">🔊</span> Som</h3>
-          <ul>
-            <li>Volume sempre <b>moderado</b>, respeitando o sossego dos vizinhos.</li>
-            <li><b>Proibidos:</b> mesa de som, karaokê, instrumentos musicais e bandas.</li>
-            <li>Proibidas caixas de som externas ou voltadas para as áreas comuns.</li>
-            <li>Com reclamações repetidas, a administração pode interromper o evento.</li>
           </ul>
         </div>
 
@@ -235,6 +292,10 @@
             <input type="checkbox" id="aceite" name="aceite">
             <span>Li e concordo com o regulamento do Salão de Festas.</span>
           </label>
+          <label class="aceite">
+            <input type="checkbox" id="aceiteSom" name="aceiteSom">
+            <span>Estou ciente das regras de <u>controle do som</u> (volume reduzido e horário de encerramento) e sou responsável por cumpri-las.</span>
+          </label>
           <button type="submit" class="botao" id="enviar">Solicitar reserva</button>
           <div class="erro" id="erro" role="alert"></div>
         </section>
@@ -249,6 +310,7 @@
         <div class="protocolo" id="r-protocolo"></div>
         <p id="r-data"></p>
         <p>Sua data fica <b>pré-reservada</b>. Ela só é confirmada após o pagamento.</p>
+        <div class="lembrete-som" id="r-som"></div>
       </section>
 
       <section class="sucesso">
@@ -373,7 +435,7 @@
         var dados = {
           nome: f.nome.value, apto: f.apto.value, bloco: f.bloco.value, telefone: f.telefone.value,
           email: f.email.value, observacoes: f.observacoes.value, site: f.site.value,
-          aceite: f.aceite.checked, data: escolhida
+          aceite: f.aceite.checked, aceiteSom: f.aceiteSom.checked, data: escolhida
         };
         if (!info) return mostrarErro('Aguarde as datas carregarem.');
         if (!escolhida) return mostrarErro('Escolha uma data no calendário (passo 1).');
@@ -383,6 +445,7 @@
         if (dados.telefone.replace(/\D/g, '').length < 10) return mostrarErro('Informe um telefone com DDD.');
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dados.email.trim())) return mostrarErro('Informe um e-mail válido.');
         if (!dados.aceite) return mostrarErro('Marque que leu e concorda com o regulamento.');
+        if (!dados.aceiteSom) return mostrarErro('Marque que está ciente das regras de controle do som.');
 
         mostrarErro('');
         var botao = $('enviar');
@@ -404,6 +467,10 @@
         $('resultado').style.display = 'block';
         $('r-protocolo').textContent = r.protocolo;
         $('r-data').textContent = r.dataExtenso + ' — ' + r.horario;
+        $('r-som').innerHTML = '🔊 <b>No dia do seu evento:</b> volume reduzido a partir das <b></b> e som desligado às <b></b>. ' +
+          'Mesa de som, karaokê, instrumentos e bandas não são permitidos.';
+        $('r-som').querySelectorAll('b')[1].textContent = r.somReduzido;
+        $('r-som').querySelectorAll('b')[2].textContent = r.encerramento;
         $('r-valor').textContent = moeda(r.valor);
         $('r-copia').value = r.pix;
         $('r-dados').innerHTML = '';

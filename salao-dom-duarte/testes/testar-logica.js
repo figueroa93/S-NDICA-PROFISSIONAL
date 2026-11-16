@@ -90,7 +90,7 @@ teste('Valor = 10% do salário mínimo (BCB) e cai para a referência se falhar'
   respostaBCB = { code: 200, body: '[{"data":"01/01/2026","valor":"1621.00"}]' };
 });
 
-const base = { nome: 'Maria Teste', apto: '302', bloco: '1', telefone: '(21) 99999-0000', email: 'maria@exemplo.com', aceite: true };
+const base = { nome: 'Maria Teste', apto: '302', bloco: '1', telefone: '(21) 99999-0000', email: 'maria@exemplo.com', aceite: true, aceiteSom: true };
 const erroDe = (dados) => { try { g('validarPedido_')(dados); return null; } catch (e) { return e.message; } };
 
 teste('Antecedência mínima de 5 dias e máxima de 180', () => {
@@ -104,6 +104,7 @@ teste('Antecedência mínima de 5 dias e máxima de 180', () => {
 
 teste('Exige aceite do regulamento e dados válidos; campo-isca bloqueia robôs', () => {
   assert.match(erroDe({ ...base, aceite: false, data: '2026-11-10' }), /regulamento/);
+  assert.match(erroDe({ ...base, aceiteSom: false, data: '2026-11-10' }), /controle do som/);
   assert.match(erroDe({ ...base, email: 'x', data: '2026-11-10' }), /e-mail/);
   assert.match(erroDe({ ...base, telefone: '1234', data: '2026-11-10' }), /telefone/);
   assert.match(erroDe({ ...base, site: 'spam', data: '2026-11-10' }), /inválido/);
@@ -135,6 +136,9 @@ teste('Fluxo: pré-reserva amarela + e-mail ao morador e à administração', ()
   assert.strictEqual(emails.length, 2);
   assert.strictEqual(emails[0].to, 'maria@exemplo.com');
   assert.ok(emails[0].htmlBody.includes(r1.pix));
+  assert.ok(emails[0].htmlBody.includes('volume reduzido a partir das 22h'));
+  assert.strictEqual(r1.somReduzido, '22h');
+  assert.strictEqual(r1.encerramento, '00h');
   assert.ok(emails[0].htmlBody.includes(r1.protocolo));
   assert.strictEqual(emails[1].to, 'domduartecondominio@gmail.com');
   assert.ok(emails[1].htmlBody.includes('acao=confirmar'));
