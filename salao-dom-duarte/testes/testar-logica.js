@@ -27,6 +27,8 @@ const agenda = {
   getEventById: (id) => eventos.find((e) => e.id === id) || null,
 };
 const props = {};
+const whats = [];
+const whatsUrls = [];
 let respostaBCB = { code: 200, body: '[{"data":"01/01/2026","valor":"1621.00"}]' };
 let agoraFixo = new Date('2026-10-26T15:00:00-03:00');
 const RealDate = Date;
@@ -40,7 +42,10 @@ const ctx = {
   LockService: { getScriptLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
   CacheService: { getScriptCache: () => ({ get: () => null, put: () => {} }) },
   PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => props[k] || null, setProperty: (k, v) => (props[k] = v) }) },
-  UrlFetchApp: { fetch: () => ({ getResponseCode: () => respostaBCB.code, getContentText: () => respostaBCB.body }) },
+  UrlFetchApp: { fetch: (url) => {
+    if (url.includes('callmebot')) { whats.push(decodeURIComponent(url.split('&text=')[1].split('&apikey=')[0])); whatsUrls.push(url); return { getResponseCode: () => 200, getContentText: () => 'ok' }; }
+    return { getResponseCode: () => respostaBCB.code, getContentText: () => respostaBCB.body };
+  } },
   MailApp: { sendEmail: (o) => emails.push(o), getRemainingDailyQuota: () => 100 },
   ScriptApp: { getService: () => ({ getUrl: () => 'https://script.google.com/macros/s/TESTE/exec' }) },
   Utilities: {
@@ -190,6 +195,57 @@ teste('Nome com HTML é escapado nos e-mails', () => {
   g('solicitarReserva')({ ...base, nome: '<b>Ze</b> & Cia', data: '2026-12-01' });
   assert.ok(!emails[0].htmlBody.includes('<b>Ze</b>'));
   assert.ok(emails[0].htmlBody.includes('&lt;b&gt;Ze'));
+});
+
+teste('WhatsApp da portaria: sem configuração não envia nada', () => {
+  whats.length = 0;
+  const r = g('solicitarReserva')({ ...base, data: '2026-12-05' });
+  const id = eventos.find((e) => e.getTag('protocolo') === r.protocolo).id;
+  g('executarAcaoAdmin')('confirmar', id, g('assinar_')('confirmar', id));
+  assert.strictEqual(whats.length, 0);
+});
+
+teste('WhatsApp da portaria: avisa na confirmação, sem e-mail/telefone do morador', () => {
+  props.PORTARIA_WHATSAPP = '(21) 98888-7777';
+  props.CALLMEBOT_APIKEY = '123456';
+  whats.length = 0; whatsUrls.length = 0;
+  const r = g('solicitarReserva')({ ...base, data: '2026-12-12' }); // sábado
+  assert.strictEqual(whats.length, 0, 'pré-reserva não avisa a portaria');
+  const id = eventos.find((e) => e.getTag('protocolo') === r.protocolo).id;
+  g('executarAcaoAdmin')('confirmar', id, g('assinar_')('confirmar', id));
+  assert.strictEqual(whats.length, 1);
+  assert.match(whats[0], /Salão de festas reservado/);
+  assert.match(whats[0], /sábado, 12\/12\/2026/);
+  assert.match(whats[0], /Apto 302 - Bloco 1 \(Maria Teste\)/);
+  assert.match(whats[0], /Som reduzido às 22h e desligado às 00h/);
+  assert.ok(!whats[0].includes('maria@exemplo.com') && !whats[0].includes('99999'));
+  assert.ok(whatsUrls[0].includes('phone=%2B5521988887777'));
+});
+
+teste('WhatsApp da portaria: avisa cancelamento só de reserva confirmada', () => {
+  whats.length = 0;
+  const conf = eventos.find((e) => e.getTag('data') === '2026-12-12');
+  g('executarAcaoAdmin')('cancelar', conf.id, g('assinar_')('cancelar', conf.id));
+  assert.strictEqual(whats.length, 1);
+  assert.match(whats[0], /CANCELADA/);
+  whats.length = 0;
+  const r = g('solicitarReserva')({ ...base, data: '2026-12-19' });
+  const pre = eventos.find((e) => e.getTag('protocolo') === r.protocolo);
+  g('executarAcaoAdmin')('cancelar', pre.id, g('assinar_')('cancelar', pre.id));
+  assert.strictEqual(whats.length, 0);
+});
+
+teste('WhatsApp da portaria: lembrete diário só no dia de evento confirmado', () => {
+  whats.length = 0;
+  agoraFixo = new Date('2026-12-05T08:00:00-03:00'); // dia da reserva confirmada no 1º teste
+  g('lembreteDiarioPortaria')();
+  assert.strictEqual(whats.length, 1);
+  assert.match(whats[0], /Hoje tem evento no salão/);
+  whats.length = 0;
+  agoraFixo = new Date('2026-12-06T08:00:00-03:00');
+  g('lembreteDiarioPortaria')();
+  assert.strictEqual(whats.length, 0);
+  agoraFixo = new Date('2026-10-26T15:00:00-03:00');
 });
 
 console.log(`\n${n} testes passaram.`);

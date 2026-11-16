@@ -159,12 +159,17 @@ function executarAcaoAdmin(acao, id, assinatura) {
     evento.setColor(CalendarApp.EventColor.GREEN);
     evento.setTitle(tituloEvento_(STATUS.CONFIRMADA, reserva));
     enviarEmailConfirmacao_(reserva);
+    avisarPortaria_('✅ *Salão de festas reservado*\n' + resumoPortaria_(reserva));
     return 'Pagamento confirmado. O evento ficou verde na agenda e o morador recebeu o e-mail "Reserva confirmada".';
   }
 
   if (acao === 'cancelar') {
     evento.deleteEvent();
     enviarEmailCancelamento_(reserva);
+    if (reserva.status === STATUS.CONFIRMADA) {
+      avisarPortaria_('❌ *Reserva do salão CANCELADA*\n' + dataPorExtenso_(reserva.data) + ' — ' + reserva.unidade +
+        '\nA data está livre.');
+    }
     return 'Reserva cancelada. A data foi liberada e o morador foi avisado por e-mail.';
   }
 
@@ -192,6 +197,10 @@ function testarConfiguracao() {
   ok('Valor da reserva hoje: R$ ' + valorReserva_().toFixed(2));
 
   ok('E-mails que ainda podem ser enviados hoje: ' + MailApp.getRemainingDailyQuota());
+
+  const wa = configWhatsapp_();
+  if (wa) ok('WhatsApp da portaria configurado: ' + wa.telefone);
+  else aviso('WhatsApp da portaria não configurado (veja o LEIAME, parte "WhatsApp da portaria").');
 
   if (CONFIG.REGULAMENTO_PDF_ID) {
     ok('PDF do regulamento encontrado: ' + DriveApp.getFileById(CONFIG.REGULAMENTO_PDF_ID).getName());
@@ -481,6 +490,79 @@ function paginaAdmin_(p) {
   return t.evaluate()
     .setTitle('Administração — Salão de Festas')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
+}
+
+/* =========================================================
+   WhatsApp da portaria (CallMeBot)
+   O telefone e a chave ficam em Configurações do projeto →
+   Propriedades do script: PORTARIA_WHATSAPP e CALLMEBOT_APIKEY.
+   ========================================================= */
+
+/**
+ * Rodar UMA vez pelo editor depois de preencher as propriedades:
+ * envia uma mensagem de teste e liga o lembrete diário das 8h.
+ */
+function ativarWhatsappPortaria() {
+  const wa = configWhatsapp_();
+  if (!wa) {
+    throw new Error('Preencha PORTARIA_WHATSAPP e CALLMEBOT_APIKEY em Configurações do projeto → Propriedades do script.');
+  }
+  ScriptApp.getProjectTriggers()
+    .filter((t) => t.getHandlerFunction() === 'lembreteDiarioPortaria')
+    .forEach((t) => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('lembreteDiarioPortaria').timeBased().everyDays(1).atHour(8).inTimezone(CONFIG.FUSO).create();
+
+  const enviado = avisarPortaria_('👋 Teste: a portaria vai receber por aqui os avisos de reserva do salão de festas do ' +
+    CONFIG.CONDOMINIO + '.');
+  const texto = (enviado ? 'OK   Mensagem de teste enviada para ' : 'ERRO Não foi possível enviar para ') + wa.telefone +
+    '\nOK   Lembrete diário das 8h ligado.';
+  Logger.log(texto);
+  return texto;
+}
+
+/** Executada todo dia às 8h: avisa a portaria se hoje tem evento confirmado no salão. */
+function lembreteDiarioPortaria() {
+  const hoje = hojeISO_();
+  agenda_()
+    .getEvents(inicioDoDia_(hoje), inicioDoDia_(somarDias_(hoje, 1)))
+    .filter((ev) => ev.getTag('status') === STATUS.CONFIRMADA && ev.getTag('data') === hoje)
+    .forEach((ev) => avisarPortaria_('📅 *Hoje tem evento no salão*\n' + resumoPortaria_(reservaDoEvento_(ev))));
+}
+
+function configWhatsapp_() {
+  const props = PropertiesService.getScriptProperties();
+  const telefone = String(props.getProperty('PORTARIA_WHATSAPP') || '').replace(/\D/g, '');
+  const apikey = String(props.getProperty('CALLMEBOT_APIKEY') || '').trim();
+  if (!telefone || !apikey) return null;
+  return { telefone: '+' + (telefone.length <= 11 ? '55' + telefone : telefone), apikey: apikey };
+}
+
+/** Só nome, unidade, data e horários: dados de contato do morador não vão para a portaria. */
+function resumoPortaria_(r) {
+  const h = HORARIOS[diaSemana_(r.data)];
+  return dataPorExtenso_(r.data) + '\n' +
+    r.unidade + ' (' + r.nome + ')\n' +
+    'Uso das ' + h.inicio + ' às ' + h.encerramento + '\n' +
+    '🔊 Som reduzido às ' + h.somReduzido + ' e desligado às ' + h.encerramento;
+}
+
+/** Envia a mensagem. Uma falha aqui nunca impede a reserva: só fica registrada no log. */
+function avisarPortaria_(texto) {
+  const wa = configWhatsapp_();
+  if (!wa) return false;
+  try {
+    const url = 'https://api.callmebot.com/whatsapp.php?phone=' + encodeURIComponent(wa.telefone) +
+      '&text=' + encodeURIComponent(texto) + '&apikey=' + encodeURIComponent(wa.apikey);
+    const resp = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
+    if (resp.getResponseCode() !== 200) {
+      console.warn('WhatsApp da portaria: resposta ' + resp.getResponseCode() + ' — ' + resp.getContentText().slice(0, 300));
+      return false;
+    }
+    return true;
+  } catch (err) {
+    console.warn('WhatsApp da portaria falhou: ' + err);
+    return false;
+  }
 }
 
 /* =========================================================

@@ -92,6 +92,22 @@ O `-i` com esse código (o *deploymentId*) reaproveita a mesma implantação, po
 
 ---
 
+## WhatsApp da portaria
+
+A portaria recebe mensagens automáticas pelo WhatsApp, enviadas pelo serviço gratuito **CallMeBot**:
+
+- ✅ quando uma reserva é **confirmada** (pagamento ok);
+- ❌ quando uma reserva **confirmada** é cancelada;
+- 📅 às **8h do dia do evento**, um lembrete.
+
+As mensagens levam só a data, o apto/bloco, o nome e os horários. O e-mail e o telefone do morador não vão para a portaria. Pré-reservas não geram aviso.
+
+**Para trocar o número ou a chave:** abra o editor, clique na **engrenagem (Configurações do projeto)** e role até **Propriedades do script**. Altere `PORTARIA_WHATSAPP` (celular com DDD) e `CALLMEBOT_APIKEY` (a chave que o CallMeBot mandou). Clique em **Salvar propriedades do script**. Depois, no editor, rode **ativarWhatsappPortaria** uma vez: chega uma mensagem de teste.
+
+Se o CallMeBot ficar fora do ar, as reservas continuam funcionando normalmente. Só o aviso de WhatsApp deixa de chegar, e os e-mails continuam.
+
+---
+
 ## Mudanças no regulamento
 
 - **Texto que aparece na página:** arquivo `Regulamento.html`.
