@@ -25,8 +25,12 @@ const agenda = {
   getEvents: (a, b) => eventos.filter((e) => e.ini < b && e.fim > a),
   createEvent: novoEvento,
   getEventById: (id) => eventos.find((e) => e.id === id) || null,
+  createAllDayEvent: (t, d, o) => novoEvento(t, new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate(), 3)),
+    new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate() + 1, 3)), o),
 };
 const props = {};
+let usuarioAtivo = 'domduartecondominio@gmail.com';
+const gatilhos = [];
 const whats = [];
 const whatsUrls = [];
 let respostaBCB = { code: 200, body: '[{"data":"01/01/2026","valor":"1621.00"}]' };
@@ -38,7 +42,7 @@ class FakeDate extends RealDate {
 }
 const ctx = {
   Date: FakeDate, console, JSON, Math, Number, String, Object, Array, encodeURIComponent,
-  CalendarApp: { EventColor: { YELLOW: '5', GREEN: '10' }, getDefaultCalendar: () => agenda, getCalendarById: () => agenda },
+  CalendarApp: { EventColor: { YELLOW: '5', GREEN: '10', GRAY: '8' }, getDefaultCalendar: () => agenda, getCalendarById: () => agenda },
   LockService: { getScriptLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
   CacheService: { getScriptCache: () => ({ get: () => null, put: () => {} }) },
   PropertiesService: { getScriptProperties: () => ({ getProperty: (k) => props[k] || null, setProperty: (k, v) => (props[k] = v) }) },
@@ -47,7 +51,8 @@ const ctx = {
     return { getResponseCode: () => respostaBCB.code, getContentText: () => respostaBCB.body };
   } },
   MailApp: { sendEmail: (o) => emails.push(o), getRemainingDailyQuota: () => 100 },
-  ScriptApp: { getService: () => ({ getUrl: () => 'https://script.google.com/macros/s/TESTE/exec' }) },
+  ScriptApp: { getService: () => ({ getUrl: () => 'https://script.google.com/macros/s/TESTE/exec' }),
+    getProjectTriggers: () => gatilhos.map((id) => ({ getUniqueId: () => id })) },
   Utilities: {
     formatDate: (d, tz, f) => {
       const s = new RealDate(d.getTime() - 3 * 3600e3).toISOString();
@@ -60,6 +65,7 @@ const ctx = {
   },
   HtmlService: { createHtmlOutputFromFile: (n) => ({ getContent: () => fs.readFileSync(path.join(__dirname, '..', n + '.html'), 'utf8') }) },
   Logger: { log: () => {} },
+  Session: { getActiveUser: () => ({ getEmail: () => usuarioAtivo }) },
   DriveApp: {},
 };
 vm.createContext(ctx);
@@ -238,14 +244,36 @@ teste('WhatsApp da portaria: avisa cancelamento só de reserva confirmada', () =
 teste('WhatsApp da portaria: lembrete diário só no dia de evento confirmado', () => {
   whats.length = 0;
   agoraFixo = new Date('2026-12-05T08:00:00-03:00'); // dia da reserva confirmada no 1º teste
-  g('lembreteDiarioPortaria')();
+  g('lembreteDiarioPortaria')({ triggerUid: 'falso' });
+  assert.strictEqual(whats.length, 0, 'chamada sem agendamento válido é ignorada');
+  gatilhos.push('gat-1');
+  g('lembreteDiarioPortaria')({ triggerUid: 'gat-1' });
   assert.strictEqual(whats.length, 1);
   assert.match(whats[0], /Hoje tem evento no salão/);
   whats.length = 0;
   agoraFixo = new Date('2026-12-06T08:00:00-03:00');
-  g('lembreteDiarioPortaria')();
+  g('lembreteDiarioPortaria')({ triggerUid: 'gat-1' });
   assert.strictEqual(whats.length, 0);
   agoraFixo = new Date('2026-10-26T15:00:00-03:00');
+});
+
+teste('Funções de administração recusam visitantes da página', () => {
+  usuarioAtivo = '';
+  assert.throws(() => g('testarConfiguracao')(), /restrita à administração/);
+  assert.throws(() => g('ativarWhatsappPortaria')(), /restrita à administração/);
+  assert.throws(() => g('bloquearDatasDezembro2026')(), /restrita à administração/);
+  usuarioAtivo = 'domduartecondominio@gmail.com';
+});
+
+teste('Bloqueio de 12, 19, 24, 25 e 31/12: datas ficam ocupadas e não duplica', () => {
+  const log = g('bloquearDatasDezembro2026')();
+  assert.strictEqual((log.match(/^BLOQUEADA/gm) || []).length, 5, log);
+  assert.match(log, /sábado, 12\/12\/2026/);
+  ['2026-12-12', '2026-12-19', '2026-12-24', '2026-12-25', '2026-12-31'].forEach((d) => assert.strictEqual(g('dataLivre_')(d), false, d));
+  ['2026-12-11', '2026-12-13', '2026-12-26', '2027-01-01'].forEach((d) => assert.strictEqual(g('dataLivre_')(d), true, d));
+  assert.throws(() => g('solicitarReserva')({ ...base, data: '2026-12-24' }), /bloqueada/);
+  const log2 = g('bloquearDatasDezembro2026')();
+  assert.strictEqual((log2.match(/^JÁ ESTAVA BLOQUEADA/gm) || []).length, 5);
 });
 
 console.log(`\n${n} testes passaram.`);

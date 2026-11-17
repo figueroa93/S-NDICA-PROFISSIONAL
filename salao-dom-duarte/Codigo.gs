@@ -177,10 +177,62 @@ function executarAcaoAdmin(acao, id, assinatura) {
 }
 
 /* =========================================================
+   Bloqueio de datas pela administração (rodar pelo editor)
+   ========================================================= */
+
+/** Bloqueia as datas pedidas pelo síndico para dezembro de 2026. */
+function bloquearDatasDezembro2026() {
+  return bloquearDatas_(['2026-12-12', '2026-12-19', '2026-12-24', '2026-12-25', '2026-12-31'],
+    'Data bloqueada pela administração');
+}
+
+/**
+ * Cria um evento de dia inteiro (cinza) em cada data. Não mexe em reservas
+ * que já existam: apenas avisa no registro.
+ */
+function bloquearDatas_(datas, motivo) {
+  exigirAdministracao_();
+  const log = [];
+  datas.forEach((d) => {
+    const eventos = agenda_().getEvents(inicioDoDia_(d), inicioDoDia_(somarDias_(d, 1)))
+      .filter((ev) => ev.getEndTime() > inicioDoDia_(d));
+    if (eventos.some((ev) => ev.getTag('bloqueio') === 'sim')) {
+      log.push('JÁ ESTAVA BLOQUEADA ' + dataPorExtenso_(d));
+      return;
+    }
+    const reservas = eventos.filter((ev) => ev.getTag('protocolo'));
+    const p = d.split('-').map(Number);
+    const ev = agenda_().createAllDayEvent('BLOQUEADO — Salão — ' + motivo, new Date(p[0], p[1] - 1, p[2]),
+      { description: motivo + '. Para liberar a data, apague este evento.' });
+    ev.setColor(CalendarApp.EventColor.GRAY);
+    ev.setTag('bloqueio', 'sim');
+    log.push('BLOQUEADA ' + dataPorExtenso_(d) + (reservas.length
+      ? ' — ATENÇÃO: já existe reserva neste dia (' + reservas.map((r) => r.getTitle()).join('; ') +
+        '). A reserva não foi alterada; cancele pelo e-mail se for o caso.'
+      : ''));
+  });
+  const texto = log.join('\n');
+  Logger.log(texto);
+  return texto;
+}
+
+/**
+ * Funções de administração só podem ser usadas pela conta do condomínio
+ * (no editor). Visitantes da página não conseguem chamá-las.
+ */
+function exigirAdministracao_() {
+  const quem = String(Session.getActiveUser().getEmail() || '').toLowerCase();
+  if (quem !== CONFIG.EMAIL_ADMIN.toLowerCase()) {
+    throw new Error('Função restrita à administração. Rode pelo editor com a conta ' + CONFIG.EMAIL_ADMIN + '.');
+  }
+}
+
+/* =========================================================
    Teste de configuração (rodar uma vez pelo editor)
    ========================================================= */
 
 function testarConfiguracao() {
+  exigirAdministracao_();
   const log = [];
   const ok = (t) => log.push('OK   ' + t);
   const aviso = (t) => log.push('AVISO ' + t);
@@ -503,6 +555,7 @@ function paginaAdmin_(p) {
  * envia uma mensagem de teste e liga o lembrete diário das 8h.
  */
 function ativarWhatsappPortaria() {
+  exigirAdministracao_();
   const wa = configWhatsapp_();
   if (!wa) {
     throw new Error('Preencha PORTARIA_WHATSAPP e CALLMEBOT_APIKEY em Configurações do projeto → Propriedades do script.');
@@ -521,7 +574,10 @@ function ativarWhatsappPortaria() {
 }
 
 /** Executada todo dia às 8h: avisa a portaria se hoje tem evento confirmado no salão. */
-function lembreteDiarioPortaria() {
+function lembreteDiarioPortaria(e) {
+  // Só roda pelo agendamento automático (o Google informa o código do agendamento).
+  const ids = ScriptApp.getProjectTriggers().map((t) => t.getUniqueId());
+  if (!e || ids.indexOf(e.triggerUid) === -1) return;
   const hoje = hojeISO_();
   agenda_()
     .getEvents(inicioDoDia_(hoje), inicioDoDia_(somarDias_(hoje, 1)))
